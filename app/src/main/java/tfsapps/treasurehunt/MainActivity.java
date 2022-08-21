@@ -4,6 +4,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import android.content.Context;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -22,19 +25,20 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
-    final double IDO_1M = 0.000008983148616;
-    final double KEIDO_1M = 0.000010966382364;
-
-    final double IDO_50M = (0.000008983148616 * 50.0f);
-    final double KEIDO_50M = (0.000010966382364 * 50.0f);
-
-
     LocationManager locationManager;
+    static private MyMap myMap = null;
 
     //　スレッド処理
     private Timer mainTimer1;					//タイマー用
     private MainTimerTask mainTimerTask1;		//タイマタスククラス
     private Handler mHandler = new Handler();   //UI Threadへのpost用ハンドラ
+
+    private double ini_ido = 0.0f;         //今回の位置
+    private double ini_keido = 0.0f;       //今回の位置
+    private double now_ido = 0.0f;         //今回の位置
+    private double now_keido = 0.0f;       //今回の位置
+    private double bak1_ido = 0.0f;        //前回の位置
+    private double bak1_keido = 0.0f;      //前回の位置
 
 
     private final ActivityResultLauncher<String>
@@ -71,6 +75,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
 //            locationStart();
         }
+        if (myMap == null) {
+            myMap = findViewById(R.id.my_map);
+        }
+
+        /*
+        Canvas canvas = new Canvas();
+        if( myMap == null){
+            myMap = new MyMap(this);
+            myMap.onDraw(canvas);
+        }
+         */
     }
 
     public void locationStart() {
@@ -117,24 +132,37 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         double keido = 0.0f;
 
         // 緯度の表示
-        TextView textView1 = findViewById(R.id.text_view1);
-        String str1 = "Latitude:" + location.getLatitude();
-        textView1.setText(str1);
-
+//        TextView textView1 = findViewById(R.id.text_view1);
+//        String str1 = "Latitude:" + location.getLatitude();
+//        textView1.setText(str1);
         ido = location.getLatitude();
 
         // 経度の表示
-        TextView textView2 = findViewById(R.id.text_view2);
-        String str2 = "Longitude:" + location.getLongitude();
-        textView2.setText(str2);
-
+//        TextView textView2 = findViewById(R.id.text_view2);
+//        String str2 = "Longitude:" + location.getLongitude();
+//        textView2.setText(str2);
         keido = location.getLongitude();
 
         Toast toast = Toast.makeText(this,
                 "UPDATE！！"+"緯度："+ido+"　経度："+keido, Toast.LENGTH_SHORT);
         toast.show();
 
+        bak1_ido = now_ido;
+        bak1_keido = now_keido;
+        now_ido = location.getLatitude();
+        now_keido = location.getLongitude();
 
+        if (ini_ido == 0.0f || ini_keido == 0.0f){
+            ini_ido = now_ido;
+            ini_keido = now_keido;
+            myMap.InitialSetting(ini_ido, ini_keido);
+        }
+        else{
+            myMap.UpdatePosition(now_ido, now_keido);
+        }
+        MyMap my_Map = findViewById(R.id.my_map);
+        my_Map = myMap;
+        setContentView(R.layout.activity_main);
     }
 
     @Override
