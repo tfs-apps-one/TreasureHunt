@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
+import android.view.View;
 import android.widget.TextView;
 import android.content.Intent;
 import android.provider.Settings;
@@ -75,13 +76,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
 //            locationStart();
         }
-        if (myMap == null) {
-            myMap = findViewById(R.id.my_map);
-        }
     }
 
     public void locationStart() {
         Log.d("debug", "locationStart()");
+
+        if (myMap == null) {
+            myMap = findViewById(R.id.my_map);
+        }
 
         // LocationManager インスタンス生成
         locationManager =
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         else{
             myMap.UpdatePosition(now_ido, now_keido);
         }
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_sub);
     }
 
     @Override
@@ -152,6 +154,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onProviderDisabled(String provider) {
 
     }
+
+    /**
+     * メイン画面処理
+     * 
+     */
+    public void onGameScreen(View v){
+        setContentView(R.layout.activity_sub);
+    }
+
 
     /**
      * タイマータスク派生クラス
