@@ -78,14 +78,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         if (myMap == null) {
             myMap = findViewById(R.id.my_map);
         }
-
-        /*
-        Canvas canvas = new Canvas();
-        if( myMap == null){
-            myMap = new MyMap(this);
-            myMap.onDraw(canvas);
-        }
-         */
     }
 
     public void locationStart() {
@@ -124,23 +116,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
-//        Toast toast = Toast.makeText(this,
-//                "経度・緯度　UPDATE！！", Toast.LENGTH_SHORT);
-//        toast.show();
 
         double ido = 0.0f;
         double keido = 0.0f;
 
-        // 緯度の表示
-//        TextView textView1 = findViewById(R.id.text_view1);
-//        String str1 = "Latitude:" + location.getLatitude();
-//        textView1.setText(str1);
         ido = location.getLatitude();
-
-        // 経度の表示
-//        TextView textView2 = findViewById(R.id.text_view2);
-//        String str2 = "Longitude:" + location.getLongitude();
-//        textView2.setText(str2);
         keido = location.getLongitude();
 
         Toast toast = Toast.makeText(this,
@@ -160,8 +140,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         else{
             myMap.UpdatePosition(now_ido, now_keido);
         }
-        MyMap my_Map = findViewById(R.id.my_map);
-        my_Map = myMap;
         setContentView(R.layout.activity_main);
     }
 
