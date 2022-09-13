@@ -1,4 +1,7 @@
 package tfsapps.treasurehunt;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +17,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.content.Intent;
 import android.provider.Settings;
@@ -24,7 +28,7 @@ import android.Manifest;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+public class MainActivity extends AppCompatActivity implements LocationListener, MyMap.Callback {
 
     LocationManager locationManager;
     static private MyMap myMap = null;
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private double bak1_ido = 0.0f;        //前回の位置
     private double bak1_keido = 0.0f;      //前回の位置
 
+    private LinearLayout lay4;
 
     private final ActivityResultLauncher<String>
             requestPermissionLauncher = registerForActivityResult(
@@ -67,23 +72,21 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             requestPermissionLauncher.launch(
                     Manifest.permission.ACCESS_FINE_LOCATION);
         } else {
-
+/*
             //タイマーインスタンス生成
             this.mainTimer1 = new Timer();
             //タスククラスインスタンス生成
             this.mainTimerTask1 = new MainTimerTask();
             //タイマースケジュール設定＆開始
             this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
+
+ */
 //            locationStart();
         }
     }
 
     public void locationStart() {
         Log.d("debug", "locationStart()");
-
-        if (myMap == null) {
-            myMap = findViewById(R.id.my_map);
-        }
 
         // LocationManager インスタンス生成
         locationManager =
@@ -142,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         else{
             myMap.UpdatePosition(now_ido, now_keido);
         }
-        setContentView(R.layout.activity_sub);
+//        setContentView(R.layout.activity_sub);
     }
 
     @Override
@@ -157,10 +160,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     /**
      * メイン画面処理
-     * 
+     *
      */
     public void onGameScreen(View v){
         setContentView(R.layout.activity_sub);
+        LinearLayout lay4 = (LinearLayout)findViewById(R.id.linearLayout4);
+        myMap = new MyMap(this);
+        myMap.setCallback(this);
+//        lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+
+
+        /* スタートボタン押下後でよいのか？ */
+/*        if (myMap == null) {
+            myMap = findViewById(R.id.my_map);
+        }
+ */
+
+        //タイマーインスタンス生成
+        this.mainTimer1 = new Timer();
+        //タスククラスインスタンス生成
+        this.mainTimerTask1 = new MainTimerTask();
+        //タイマースケジュール設定＆開始
+        this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
     }
 
 

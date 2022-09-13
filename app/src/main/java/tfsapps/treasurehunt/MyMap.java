@@ -5,10 +5,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
 
-public class MyMap extends View {
+import androidx.annotation.NonNull;
+
+//test_make
+//public class MyMap extends View {
+public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
 
     final int START_X1 = 10;
     final int START_Y1 = 10;
@@ -18,6 +24,7 @@ public class MyMap extends View {
     final float WIDTH = 5.0f;
     public Paint paint;
     public Canvas canvas;
+    private static final long FPS = 60;
 
     private int Max_X;
     private int Max_Y;
@@ -55,13 +62,17 @@ public class MyMap extends View {
     //        public MyMap(Context context) {
 //        super(context);
 //        setWillNotDraw(false);
-      public MyMap(Context context, AttributeSet attrs){
-          super(context, attrs);
-          paint = new Paint();
-      }
+//    public MyMap(Context context, AttributeSet attrs){
+//          super(context, attrs);
+    public MyMap(Context context){
+        super(context);
+        getHolder().addCallback(this);
+        paint = new Paint();
+    }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
+    protected void drawObject(Canvas canvas) {
+//    @Override
+//    protected void onDraw(Canvas canvas) {
         int i ,j;
 
         // ペイントする色の設定
@@ -186,6 +197,74 @@ public class MyMap extends View {
         tmp = (t_kei - this.kei_1);
         tmp2 = (this.kei_2 - this.kei_1);
         this.now_kei = tmp / tmp2;
+    }
+
+/*test_make*/
+
+
+    /********************************************************************************
+     ゲーム全体の描画間隔
+     *********************************************************************************/
+    private class DrawThread extends Thread {
+        private boolean isFinished;
+        @Override
+        public void run() {
+            super.run();
+            SurfaceHolder holder = getHolder();
+            while (!isFinished) {
+                Canvas canvas = holder.lockCanvas();
+                if (canvas != null) {
+                    drawObject(canvas);
+                    holder.unlockCanvasAndPost(canvas);
+                }
+
+                try {
+                    sleep(1000 / FPS);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+    }
+
+    private DrawThread drawThread;
+
+    public interface Callback {
+    }
+
+    private Callback callback;
+
+    public void setCallback(Callback callback) {
+        this.callback = callback;
+    }
+
+    public void startDrawThread() {
+        stopDrawThread();
+        drawThread = new DrawThread();
+        drawThread.start();
+    }
+
+    public boolean stopDrawThread() {
+        if (drawThread == null) {
+            return false;
+        }
+        drawThread.isFinished = true;
+        drawThread = null;
+        return true;
+    }
+
+    @Override
+    public void surfaceCreated(@NonNull SurfaceHolder holder) {
+        startDrawThread();  //描画スレッド起動
+    }
+
+    @Override
+    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+
     }
 
 }

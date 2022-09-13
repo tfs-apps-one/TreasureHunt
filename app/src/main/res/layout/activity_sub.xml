@@ -6,21 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!--
     <tfsapps.treasurehunt.MyMap
         android:id="@+id/my_map"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
+    -->
 
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="horizontal">
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="531dp"
+        android:layout_marginBottom="30dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/my_map"
-        >
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
             android:id="@+id/text_status"
@@ -40,8 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="@+id/my_map">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/btn_tips"
@@ -54,8 +62,8 @@
                 android:layout_weight="1"
                 android:text="-START-"
                 android:textColor="@color/teal_700"
-                android:textStyle="bold"
                 android:textSize="20dp"
+                android:textStyle="bold"
                 tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
             <ImageButton
@@ -78,7 +86,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="@+id/my_map">
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
                 android:id="@+id/text_result3"
