@@ -16,107 +16,120 @@
     -->
 
     <LinearLayout
-        android:id="@+id/linearLayout4"
+        android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:orientation="horizontal">
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout5"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginBottom="30dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <TextView
-            android:id="@+id/text_status"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="hello world"
-            android:textStyle="bold" />
+        android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/linearLayout51"
+            android:id="@+id/linearLayout4"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
+            app:layout_constraintTop_toTopOf="parent"
             android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_tips"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="1"
-                android:text="-START-"
-                android:textColor="@color/teal_700"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
-
-            <ImageButton
-                android:id="@+id/btn_img_alarm"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="1"
-                android:src="@drawable/start"
-                tools:ignore="SpeakableTextPresentCheck" />
-
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout52"
+            android:id="@+id/linearLayout5"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal"
+            android:layout_weight="2"
+            android:layout_marginBottom="30dp"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
-                android:id="@+id/text_result3"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:id="@+id/text_status"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="正解率：１００％"
-                android:textColor="@color/white" />
+                android:text="hello world"
+                android:textStyle="bold" />
 
-            <ProgressBar
-                android:id="@+id/progress3"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginBottom="0dp"
+            <LinearLayout
+                android:id="@+id/linearLayout51"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="2"
-                android:progressBackgroundTint="@color/white" />
+                android:orientation="horizontal">
 
-        </LinearLayout>
+                <Button
+                    android:id="@+id/btn_tips"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:text="-START-"
+                    android:textColor="@color/teal_700"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+                <ImageButton
+                    android:id="@+id/btn_img_alarm"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:src="@drawable/start"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout52"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <TextView
+                    android:id="@+id/text_result3"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:gravity="center|right"
+                    android:text="スタミナ：８６％"
+                    android:textColor="@color/black" />
+
+                <ProgressBar
+                    android:id="@+id/progress3"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="0dp"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="86"
+                    android:progressBackgroundTint="@color/white" />
+
+            </LinearLayout>
 
     </LinearLayout>
 
+
+    </LinearLayout>
 
     <!--
     <TextView

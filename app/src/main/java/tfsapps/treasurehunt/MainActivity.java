@@ -167,8 +167,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         LinearLayout lay4 = (LinearLayout)findViewById(R.id.linearLayout4);
         myMap = new MyMap(this);
         myMap.setCallback(this);
-//        lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
-        lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+        lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+//        lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
 
 
         /* スタートボタン押下後でよいのか？ */
