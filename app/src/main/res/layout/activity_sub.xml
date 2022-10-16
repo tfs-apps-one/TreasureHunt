@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ff999999"
     tools:context=".MainActivity">
 
     <!--
@@ -49,6 +50,9 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="1"
+                app:backgroundTint="@null"
+                android:background="@drawable/bak_1"
+                android:textColor="@color/white"
                 android:gravity="center"
                 android:text="hello world"
                 android:textStyle="bold" />
@@ -69,8 +73,10 @@
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="5dp"
                     android:layout_weight="1"
+                    app:backgroundTint="@null"
+                    android:background="@drawable/bak_1"
                     android:text="-START-"
-                    android:textColor="@color/teal_700"
+                    android:textColor="@color/white"
                     android:textSize="20dp"
                     android:textStyle="bold"
                     tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
@@ -84,6 +90,8 @@
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="5dp"
                     android:layout_weight="1"
+                    app:backgroundTint="@null"
+                    android:background="@drawable/bak_1"
                     android:src="@drawable/start"
                     tools:ignore="SpeakableTextPresentCheck" />
 
@@ -94,6 +102,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                app:backgroundTint="@null"
+                android:background="@drawable/bak_1"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent">
 
@@ -108,7 +118,7 @@
                     android:layout_weight="1"
                     android:gravity="center|right"
                     android:text="スタミナ：８６％"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/white" />
 
                 <ProgressBar
                     android:id="@+id/progress3"

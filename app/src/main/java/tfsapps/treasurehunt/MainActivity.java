@@ -223,10 +223,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     }
 
-    /**
-     * メイン画面処理
-     *
-     */
+    /************************************************
+        ゲームスタート
+     ************************************************/
     public void onGameScreen(View v){
         setContentView(R.layout.activity_sub);
         LinearLayout lay4 = (LinearLayout)findViewById(R.id.linearLayout4);
@@ -249,6 +248,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         //タイマースケジュール設定＆開始
         this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
     }
+    /************************************************
+        買い物
+     ************************************************/
+    public void onShop(View v){
+
+    }
+    /************************************************
+        ステータス（戦歴）
+     ************************************************/
+    public void onStatus(View v){
+
+    }
 
 
     /**
@@ -269,11 +280,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
 
-    /**
-     * DB関連処理
-     *
-     */
-    /* **************************************************
+    /***************************************************
+     　↓↓↓ 以下、DB関連処理　↓↓↓
+     ***************************************************/
+
+    /***************************************************
         DB初期ロードおよび設定
     ****************************************************/
     public void AppDBInitRoad() {
@@ -384,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
     }
 
-    /* **************************************************
+    /***************************************************
         DB更新
     ****************************************************/
     public void AppDBUpdated() {
