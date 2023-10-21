@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -11,6 +12,10 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 //test_make
 //public class MyMap extends View {
@@ -25,7 +30,9 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     public Paint paint;
     public Canvas canvas;
     private static final long FPS = 60;
+    private final Random rand = new Random(System.currentTimeMillis());
 
+    private int Hankei = 100;   //半径
     private int Max_X;
     private int Max_Y;
 
@@ -46,8 +53,8 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     final double IDO_1000M = (0.000008983148616 * 1000.0f);
     final double KEIDO_1000M = (0.000010966382364 * 1000.0f);
 
-    static private double init_pos_ido = 0.0f;
-    static private double init_pos_kei = 0.0f;
+    static public double init_pos_ido = 0.0f;
+    static public double init_pos_kei = 0.0f;
     static private double ido_1 = 0.0f;
     static private double ido_2 = 0.0f;
     static private double kei_1 = 0.0f;
@@ -58,12 +65,16 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     static private double bak_ido = 0.0f;
     static private double bak_kei = 0.0f;
 
+    static long _refresh = 0;
+
+    private final List<Treasure> treasuresList = new ArrayList<Treasure>();
+
 
     //        public MyMap(Context context) {
 //        super(context);
 //        setWillNotDraw(false);
-//    public MyMap(Context context, AttributeSet attrs){
-//          super(context, attrs);
+//        public MyMap(Context context, AttributeSet attrs){
+//        super(context, attrs);
     public MyMap(Context context){
         super(context);
         getHolder().addCallback(this);
@@ -74,6 +85,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
 //    @Override
 //    protected void onDraw(Canvas canvas) {
         int i ,j;
+        int rader = 0; //レーダーの範囲
 
         // ペイントする色の設定
         paint.setColor(Color.argb(255, 100, 255, 100));
@@ -90,6 +102,13 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         int temp_x2 = START_X1 + YOKO;
         int temp_y2 = START_Y1 + TATE;
 
+        //再描画表示
+        _refresh++;
+        if (_refresh > 48) {
+            _refresh = 0;
+            canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        }
+
         // drawRectを使って矩形を描画する、引数に座標を設定
         // (x1,y1,x2,y2,paint) 左上の座標(x1,y1), 右下の座標(x2,y2)
 
@@ -104,6 +123,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         float dp = 5.0f;
         float xc = (getWidth() / 2);
         float yc = xc;
+        float xc_n = 0, yc_n = 0;
 
         //初期の位置
         if (init_pos_ido == 0.0f || init_pos_kei == 0.0f){
@@ -119,10 +139,15 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
             canvas.drawCircle(xc - dp, yc - dp, 10, paint);
         }
 
+        //レーダー範囲
+        rader = 200;
+//      rader = (Max_X / MASU);   // 100m ÷　MASU（1080dot の時　MASU=21）
+
         //自身の位置(現在の位置)
         if (this.now_kei == 0.0f || this.now_ido == 0.0f) {
             //表示せず
         }else{
+            /* 自身の位置 */
             paint.setColor(Color.argb(255, 125, 125, 255));
             paint.setStrokeWidth(15.0f);
             paint.setAntiAlias(true);
@@ -132,11 +157,27 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
 
             // (x1,y1,r,paint) 中心x1座標, 中心y1座標, r半径
             canvas.drawCircle(xc - dp, yc - dp, 15, paint);
+
+            /* レーダーの範囲 */
+            paint.setColor(Color.argb(255, 125, 225, 255));
+            paint.setStrokeWidth(5.0f);
+            paint.setAntiAlias(true);
+            paint.setStyle(Paint.Style.STROKE);
+            xc = (float) (this.now_kei * getWidth());
+            yc = (float) (this.now_ido * getWidth());
+
+            xc_n = xc;
+            yc_n = yc;
+
+            // (x1,y1,r,paint) 中心x1座標, 中心y1座標, r半径
+            canvas.drawCircle(xc - dp, yc - dp, rader, paint);
         }
-        //自身の位置(現在の位置)
+
+        /*
+        //自身の位置(一つ前の位置　履歴表示)
         if (this.bak_kei == 0.0f || this.bak_ido == 0.0f) {
             //表示せず
-        }else{
+        }else {
             paint.setColor(Color.argb(255, 200, 200, 200));
             paint.setStrokeWidth(12.0f);
             paint.setAntiAlias(true);
@@ -147,6 +188,49 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
             // (x1,y1,r,paint) 中心x1座標, 中心y1座標, r半径
             canvas.drawCircle(xc - dp, yc - dp, 14, paint);
         }
+        */
+
+        float xc2;
+        float yc2;
+
+        float range = 200;
+
+        //宝物を表示
+        if (init_pos_ido == 0.0f || init_pos_kei == 0.0f){
+            // 何も表示しない
+        }
+        else {
+            for (int k=0; k < treasuresList.size(); k++) {
+
+                //自身の位置(初期値)
+                paint.setColor(Color.argb(255, 255, 255, 125));
+                paint.setStrokeWidth(15.0f);
+                paint.setAntiAlias(true);
+                paint.setStyle(Paint.Style.STROKE);
+                xc2 = (float) (treasuresList.get(k).t_pos_x );
+                yc2 = (float) (treasuresList.get(k).t_pos_y );
+
+                //ヒット状態をリセット
+                treasuresList.get(k).isHit = false;
+
+                /* 自身の位置が　★宝の近くにある状態 */
+                if (xc_n != 0.0f && yc_n != 0.0f){
+                    if ( (xc_n - range) <= xc2 && xc2 <= (xc_n + range) ){
+                        if ( (yc_n - range) <= yc2 && yc2 <= (yc_n + range) ){
+                            treasuresList.get(k).isHit = true;
+                            paint.setColor(Color.argb(255, 0, 255, 0));
+                        }
+                    }
+                }
+
+                // (x1,y1,r,paint) 中心x1座標, 中心y1座標, r半径
+                canvas.drawCircle( xc2 - dp, yc2 - dp, 10, paint);
+//                canvas.drawCircle(treasuresList.get(k).t_pos_x - dp, treasuresList.get(k).t_pos_y - dp, 10, paint);
+//                canvas.drawCircle( xc - dp, yc - dp, 10, paint);
+
+            }
+        }
+
 
     }
 
@@ -155,6 +239,25 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         //  自身の位置
         this.init_pos_ido = i_ido;
         this.init_pos_kei = i_kei;
+
+        Max_X = (int)getWidth();
+        Max_Y = (int)getHeight();
+        MASU = ((Max_X * 10 / 10) / YOKO);
+
+        /*
+         1マスは50で、最大1000　縦横同じ
+         kei_1,ido2 --------- 100M ---------kei_2
+         |
+         |
+         |
+         |
+         100M
+         |
+         |
+         |
+         ido_1
+         */
+
 
         //  範囲 100 m
         this.ido_1 = (this.init_pos_ido - IDO_100M);
@@ -181,6 +284,58 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         this.kei_2 = (this.init_pos_kei + KEIDO_1000M);
 
  */
+
+        //宝物セット
+        int _x;
+        int _y;
+        double _dx;
+        double _dy;
+        int _type;
+        int _x_pm;
+        int _y_pm;
+        double _ido;
+        double _kei;
+        int i = 0;
+        while ( i<15     ){
+            _x = rand.nextInt(YOKO * MASU ); //1000
+            _y = rand.nextInt(TATE * MASU ); //1000
+
+            i++;
+            /*
+            if (_x > YOKO * 7 && _y > TATE * 7){
+                i++;
+            }
+            else {
+                continue;
+            }*/
+
+            _type  = rand.nextInt(4);    // レア宝、宝、ガラクタ、ガラクタ
+            _x_pm = rand.nextInt(2);
+            _y_pm = rand.nextInt(2);
+//            _x += 50;
+//            _y += 50;
+            _dx = (double)( _x * KEIDO_1M );
+            _dy = (double)( _y * IDO_1M );
+            _dx = (double)( 100 * KEIDO_1M );
+
+            if (_x_pm > 0) {
+                _kei = this.init_pos_kei + _dx;
+            }
+            else{
+                _kei = this.init_pos_kei + (-1 * _dx);
+
+            }
+            if (_y_pm > 0) {
+                _ido = this.init_pos_ido + _dy;
+            }
+            else{
+                _ido = this.init_pos_ido + ( -1 * _dy);
+            }
+
+            Treasure my_treasure = new Treasure(_x, _y, _type, _kei, _ido);
+            treasuresList.add(my_treasure);
+        }
+
     }
 
     // スタート位置
@@ -201,6 +356,18 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
 
 /*test_make*/
 
+    /* 宝物にヒットしているのか？ */
+    public boolean isHitTreasure(){
+        if (treasuresList.size() == 0){
+            return false;
+        }
+        for (int k=0; k < treasuresList.size(); k++) {
+            if (treasuresList.get(k).isHit == true) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /********************************************************************************
      ゲーム全体の描画間隔

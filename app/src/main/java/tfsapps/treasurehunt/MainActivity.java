@@ -20,6 +20,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.content.Intent;
@@ -28,6 +29,9 @@ import android.util.Log;
 import android.widget.Toast;
 import android.Manifest;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     LocationManager locationManager;
     static private MyMap myMap = null;
+//    private final Random rand = new Random(System.currentTimeMillis());
 
     //　スレッド処理
     private Timer mainTimer1;					//タイマー用
@@ -182,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 1000, 50, this);
 
+
     }
 
     @Override
@@ -249,6 +255,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
     }
     /************************************************
+        画面表示
+     ************************************************/
+    public void SubShow(){
+
+        ImageButton imgBtn = findViewById(R.id.btn_img_scoop);
+        TextView txt = findViewById(R.id.text_status);
+
+        if (myMap.isHitTreasure()){
+            txt.setText("お宝GETだせ！！！");
+        }
+        else{
+            txt.setText("お宝・・・・・");
+        }
+    }
+
+
+    /************************************************
         買い物
      ************************************************/
     public void onShop(View v){
@@ -274,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             mHandler.post(new Runnable() {
                 public void run() {
                     locationStart();
+                    SubShow();
                 }
             });
         }
