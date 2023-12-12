@@ -65,9 +65,11 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     static private double bak_ido = 0.0f;
     static private double bak_kei = 0.0f;
 
-    static long _refresh = 0;
+    static long _refresh = 0;   //画面リフレッシュ　履歴表示クリア
+    static long _blink = 0;     //お宝ヒット中の表示
 
     private final List<Treasure> treasuresList = new ArrayList<Treasure>();
+    public Treasure nowTreasure;
 
 
     //        public MyMap(Context context) {
@@ -88,7 +90,19 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         int rader = 0; //レーダーの範囲
 
         // ペイントする色の設定
-        paint.setColor(Color.argb(255, 100, 255, 100));
+        if (this.isHitTreasure() ){
+            _blink++;
+            if (_blink < 50 ){
+                paint.setColor(Color.argb(255, 100, 255, 100));
+            }
+            else{
+                paint.setColor(Color.argb(255, 100, 190, 100));
+            }
+            if (_blink > 100)   _blink = 0;
+        }
+        else {
+            paint.setColor(Color.argb(255, 100, 255, 100));
+        }
         // ペイントストロークの太さを設定
         paint.setStrokeWidth(WIDTH);
         // Styleのストロークを設定する
@@ -201,6 +215,11 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         }
         else {
             for (int k=0; k < treasuresList.size(); k++) {
+
+                //ザクザクしたものは表示しない
+                if (treasuresList.get(k).isAlive == false) {
+                    continue;
+                }
 
                 //自身の位置(初期値)
                 paint.setColor(Color.argb(255, 255, 255, 125));
@@ -359,18 +378,46 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     /* 宝物にヒットしているのか？ */
     public boolean isHitTreasure(){
         if (treasuresList.size() == 0){
+            nowTreasure = null;
             return false;
         }
         for (int k=0; k < treasuresList.size(); k++) {
             if (treasuresList.get(k).isHit == true) {
+                if (treasuresList.get(k).isAlive == false){
+                    continue;
+                }
+                nowTreasure = treasuresList.get(k);
                 return true;
             }
         }
+        nowTreasure = null;
         return false;
+    }
+    /* 宝物ザクザクの結果 */
+    public int ZakuZakuResult(){
+        int ret = -99;
+        if (nowTreasure != null){
+            ret = nowTreasure.t_type;
+
+            //結果が出たので削除する
+            for (int k=0; k < treasuresList.size(); k++) {
+                if (treasuresList.get(k).isAlive == false){
+                    continue;
+                }
+                if (nowTreasure.t_kei == treasuresList.get(k).t_kei &&
+                        nowTreasure.t_ido == treasuresList.get(k).t_ido
+                    ){
+                    nowTreasure = null;
+                    treasuresList.get(k).isAlive = false;
+                    break;
+                }
+            }
+        }
+        return ret;
     }
 
     /********************************************************************************
-     ゲーム全体の描画間隔
+         ゲーム全体の描画間隔
      *********************************************************************************/
     private class DrawThread extends Thread {
         private boolean isFinished;

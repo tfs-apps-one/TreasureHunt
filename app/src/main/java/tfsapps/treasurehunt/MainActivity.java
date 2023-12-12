@@ -80,6 +80,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private int db_syssw_4 = 0;             //DB
     private int db_syssw_5 = 0;             //DB
 
+    private boolean get_GPS = false;
+
+    private MyDialog myDialog;
 
     private final ActivityResultLauncher<String>
             requestPermissionLauncher = registerForActivityResult(
@@ -184,10 +187,30 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             return;
         }
 
+        /*
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                1000, 50, this);
+                5000, 5, this);
 
+        */
 
+        /*
+            GPS_PROVIDER	    GPSを利用した比較的精度の高い位置情報を使う
+            NETWORK_PROVIDER    ネットワークを利用した位置情報を使う
+            PASSIVE_PROVIDER    直近で使用された位置情報を使う
+
+            第１〜４までの引数
+                Providerの種類
+                通知の最小時間の間隔
+                通知の最小距離の間隔
+                LocationListenerのインスタンス
+         */
+        List<String> providers = locationManager.getProviders(true);
+        /* 並行して、３のプロバイダーを起動する */
+        for (String provider : providers){
+            locationManager.requestLocationUpdates(provider,
+                    1000, 3, this);
+        }
+        get_GPS = true;
     }
 
     @Override
@@ -195,6 +218,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
         double ido = 0.0f;
         double keido = 0.0f;
+
+        if (get_GPS == true){
+            get_GPS = false;
+        }
+        else{
+            /* 取得ずみのためスキップ */
+            return;
+        }
 
         ido = location.getLatitude();
         keido = location.getLongitude();
@@ -252,7 +283,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         //タスククラスインスタンス生成
         this.mainTimerTask1 = new MainTimerTask();
         //タイマースケジュール設定＆開始
-        this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
+//        this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
+        this.mainTimer1.schedule(mainTimerTask1, 1000, 5000);
     }
     /************************************************
         画面表示
@@ -269,6 +301,45 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             txt.setText("お宝・・・・・");
         }
     }
+    /************************************************
+        スコップ
+     ************************************************/
+    public void onSubScoop(View v){
+        MyDialog pop = new MyDialog(this, "穴掘り", "お宝ザクザク", 1);
+
+        if (myMap.isHitTreasure()){
+            pop.PopShow();
+//            ScoopResult();
+        }
+        else{
+        }
+
+    }
+    //結果
+    public void ScoopResult(){
+        int type = myMap.ZakuZakuResult();
+        MyDialog pop;
+
+        switch (type){
+            case 0:
+                pop = new MyDialog(this, "レア宝", "やったー！！", 0);
+                pop.PopShow();
+                break;
+            case 1:
+                pop = new MyDialog(this, "普通宝", "普通だね！！", 0);
+                pop.PopShow();
+                break;
+            case 2:
+                pop = new MyDialog(this, "ガラクタ", "残念１ー！！", 0);
+                pop.PopShow();
+                break;
+            case 3:
+                pop = new MyDialog(this, "ガラクタ２", "残念２ー！！", 0);
+                pop.PopShow();
+                break;
+        }
+    }
+
 
 
     /************************************************

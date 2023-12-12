@@ -90,6 +90,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="5dp"
                     android:layout_weight="1"
+                    android:onClick="onSubScoop"
                     app:backgroundTint="@null"
                     android:background="@drawable/bak_1"
                     android:src="@drawable/start"
