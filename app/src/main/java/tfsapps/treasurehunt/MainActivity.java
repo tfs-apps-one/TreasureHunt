@@ -20,14 +20,18 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.content.Intent;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 import android.Manifest;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -219,6 +223,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         double ido = 0.0f;
         double keido = 0.0f;
 
+        if (this.mainTimer1 == null){
+            return;
+        }
+
         if (get_GPS == true){
             get_GPS = false;
         }
@@ -231,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         keido = location.getLongitude();
 
         Toast toast = Toast.makeText(this,
-                "UPDATE！！"+"緯度："+ido+"　経度："+keido, Toast.LENGTH_SHORT);
+                "UPDATE！！\n"+"緯度："+ido+"　経度："+keido, Toast.LENGTH_SHORT);
         toast.show();
 
         bak1_ido = now_ido;
@@ -264,11 +272,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         ゲームスタート
      ************************************************/
     public void onGameScreen(View v){
+        //サブ画面へ移動
         setContentView(R.layout.activity_sub);
-        LinearLayout lay4 = (LinearLayout)findViewById(R.id.linearLayout4);
-        myMap = new MyMap(this);
-        myMap.setCallback(this);
-        lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        SubShow();
 //        lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
 
 
@@ -278,38 +284,107 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
  */
 
-        //タイマーインスタンス生成
-        this.mainTimer1 = new Timer();
-        //タスククラスインスタンス生成
-        this.mainTimerTask1 = new MainTimerTask();
-        //タイマースケジュール設定＆開始
-//        this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
-        this.mainTimer1.schedule(mainTimerTask1, 1000, 5000);
     }
     /************************************************
-        画面表示
+        画面表示（サブ画面＝ドラゴンレーダー画面）
      ************************************************/
     public void SubShow(){
-
         ImageButton imgBtn = findViewById(R.id.btn_img_scoop);
-        TextView txt = findViewById(R.id.text_status);
-
-        if (myMap.isHitTreasure()){
-            txt.setText("お宝GETだせ！！！");
+        TextView txtstatus = findViewById(R.id.text_status);
+        Button btn = findViewById(R.id.btn_start_end);
+        if (this.mainTimer1 == null) {
+            txtstatus.setText("「START」を押して宝探しを開始して下さい");
+            btn.setText("START");
         }
         else{
-            txt.setText("お宝・・・・・");
+            String tmp =
+                    "\n赤：はじめの位置　青：いまの位置　" +
+                    "\n黄：お宝？の場所　緑：穴掘り開始　" +
+                    "\n\n";
+
+
+            if (myMap.isHitTreasure()) {
+                tmp += "「スコップ」ボタンで穴掘り開始\n";
+            } else {
+                tmp += "お宝？の場所まで移動しよう・・・\n";
+            }
+            btn.setText("END");
+            txtstatus.setText(tmp);
+            SubStamina();
         }
     }
     /************************************************
-        スコップ
+        スタミナゲージ
+     ************************************************/
+    public void SubStamina() {
+        ProgressBar bar = findViewById(R.id.progress_stamina);
+        bar.setMax(100);
+        bar.setMin(0);
+        bar.setProgress(db_stamina);
+
+        TextView txt = findViewById(R.id.text_stamina);
+        txt.setText("スタミナ残:" + db_stamina + "%");
+    }
+    /************************************************
+         スタート／エンド　ボタン
+     ************************************************/
+    public void onSubStartEnd(View v) {
+        //スタート
+        if (this.mainTimer1 == null) {
+            LinearLayout lay4 = (LinearLayout)findViewById(R.id.linearLayout4);
+            myMap = new MyMap(this);
+            myMap.setCallback(this);
+            lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
+
+            //タイマーインスタンス生成
+            this.mainTimer1 = new Timer();
+            //タスククラスインスタンス生成
+            this.mainTimerTask1 = new MainTimerTask();
+            //タイマースケジュール設定＆開始
+            //      this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
+            this.mainTimer1.schedule(mainTimerTask1, 1000, 5000);
+        }
+        //エンド
+        else {
+            setContentView(R.layout.activity_sub);
+            gameClear();
+        }
+        SubShow();
+    }
+    /************************************************
+         宝探しゲーム　終了処理
+     ************************************************/
+    public void gameClear() {
+        if (this.mainTimer1 != null) {
+            this.mainTimer1.cancel();
+            this.mainTimer1 = null;
+        }
+        if (myMap != null){
+            myMap = null;
+        }
+        ini_ido = 0.0f;         //今回の位置
+        ini_keido = 0.0f;       //今回の位置
+        now_ido = 0.0f;         //今回の位置
+        now_keido = 0.0f;       //今回の位置
+        bak1_ido = 0.0f;        //前回の位置
+        bak1_keido = 0.0f;      //前回の位置
+    }
+    /************************************************
+         サブ画面のメニュー　ボタン
+     ************************************************/
+    public void onSubMenu(View v) {
+        gameClear();
+        setContentView(R.layout.activity_main);
+    }
+    /************************************************
+        スコップ　ボタン（宝ザクザク）
      ************************************************/
     public void onSubScoop(View v){
         MyDialog pop = new MyDialog(this, "穴掘り", "お宝ザクザク", 1);
 
         if (myMap.isHitTreasure()){
             pop.PopShow();
-//            ScoopResult();
+//           ScoopResult();
         }
         else{
         }
@@ -319,6 +394,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     public void ScoopResult(){
         int type = myMap.ZakuZakuResult();
         MyDialog pop;
+        //スタミナ減少
+        db_stamina -= 10;
+        if (db_stamina < 0){
+            db_stamina = 0;
+        }
 
         switch (type){
             case 0:
@@ -336,6 +416,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             case 3:
                 pop = new MyDialog(this, "ガラクタ２", "残念２ー！！", 0);
                 pop.PopShow();
+                break;
+
+            default:
                 break;
         }
     }

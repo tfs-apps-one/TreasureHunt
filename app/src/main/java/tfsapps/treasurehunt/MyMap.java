@@ -53,6 +53,21 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     final double IDO_1000M = (0.000008983148616 * 1000.0f);
     final double KEIDO_1000M = (0.000010966382364 * 1000.0f);
 
+    public double init_pos_ido = 0.0f;
+    public double init_pos_kei = 0.0f;
+    private double ido_1 = 0.0f;
+    private double ido_2 = 0.0f;
+    private double kei_1 = 0.0f;
+    private double kei_2 = 0.0f;
+    private double now_ido = 0.0f;
+    private double now_kei = 0.0f;
+    private double bak_ido = 0.0f;
+    private double bak_kei = 0.0f;
+
+    long _refresh = 0;   //画面リフレッシュ　履歴表示クリア
+    long _blink = 0;     //お宝ヒット中の表示
+
+    /*
     static public double init_pos_ido = 0.0f;
     static public double init_pos_kei = 0.0f;
     static private double ido_1 = 0.0f;
@@ -67,7 +82,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
 
     static long _refresh = 0;   //画面リフレッシュ　履歴表示クリア
     static long _blink = 0;     //お宝ヒット中の表示
-
+    */
     private final List<Treasure> treasuresList = new ArrayList<Treasure>();
     public Treasure nowTreasure;
 
