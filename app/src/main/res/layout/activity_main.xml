@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:id="@+id/linearLayout51"
+        android:id="@+id/linearLayout01"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -28,41 +28,96 @@
             android:textStyle="bold"
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
-        <Button
-            android:id="@+id/btn_start"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_weight="1"
-            app:backgroundTint="@null"
-            android:background="@drawable/bak_1"
-            android:text="ゲームスタート"
-            android:textColor="@color/white"
-            android:onClick="onGameScreen"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
-        <Button
-            android:id="@+id/btn_shop"
+        <LinearLayout
+            android:id="@+id/linearLayout02"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
             android:layout_weight="1"
-            app:backgroundTint="@null"
-            android:background="@drawable/bak_1"
-            android:text="買い物"
-            android:textColor="@color/white"
-            android:onClick="onShop"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_story"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                app:backgroundTint="@null"
+                android:background="@drawable/bak_1"
+                android:text="物語"
+                android:textColor="@color/white"
+                android:onClick="onGameStory"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+            <Button
+                android:id="@+id/btn_start"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                app:backgroundTint="@null"
+                android:background="@drawable/bak_1"
+                android:text="宝探し"
+                android:textColor="@color/white"
+                android:onClick="onGameScreen"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout03"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_shop"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                app:backgroundTint="@null"
+                android:background="@drawable/bak_1"
+                android:text="ショップ"
+                android:textColor="@color/white"
+                android:onClick="onShop"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+            <Button
+                android:id="@+id/btn_scout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                app:backgroundTint="@null"
+                android:background="@drawable/bak_1"
+                android:text="仲間スカウト"
+                android:textColor="@color/white"
+                android:onClick="onScout"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btn_status"
@@ -75,7 +130,7 @@
             android:layout_weight="1"
             app:backgroundTint="@null"
             android:background="@drawable/bak_1"
-            android:text="ステータス"
+            android:text="冒険ステータス"
             android:textColor="@color/white"
             android:onClick="onStatus"
             android:textSize="20dp"

@@ -272,9 +272,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
     /************************************************
+         物語
+     ************************************************/
+    public void onGameStory(View v) {
+        MyStory();
+    }
+    /************************************************
         ゲームスタート
      ************************************************/
     public void onGameScreen(View v){
+        String message = "";
+        if (db_story == 0){
+            message += "\n「物語」を始めて下さい\n\n\n\n";
+            CustomDialog.showCustomDialog(this, R.drawable.info, message, 0);
+            return;
+        }
+
         //サブ画面へ移動
         setContentView(R.layout.activity_sub);
         SubShow();
@@ -426,13 +439,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 id = R.drawable.t03;
                 message += "神キター！！\n\n\nレア宝「絵画」を入手しました\n\n";
                 break;
-            case 10:
-                id = R.drawable.t10;
-                message += "やったー！！\n\n\nお宝「お札」を入手しました\n\n";
-                break;
-            case 20:
-                id = R.drawable.t20;
+            case 11:
+                id = R.drawable.t11;
                 message += "やったー！！\n\n\nお宝「コイン」を入手しました\n\n";
+                break;
+            case 12:
+                id = R.drawable.t12;
+                message += "やったー！！\n\n\nお宝「福引券」を入手しました\n\n";
+                break;
+            case 13:
+                id = R.drawable.t13;
+                message += "やったー！！\n\n\nお宝「スカウトベル」を入手しました\n\n";
                 break;
             case 61:
                 id = R.drawable.t61;
@@ -543,23 +560,31 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             default:
                 break;
         }
-
         CustomDialog.showCustomDialogStory(this, id, message, 1, step);
         return;
     }
 
 
     /************************************************
-        買い物
+        買い物（ショップ）
      ************************************************/
     public void onShop(View v){
-
+        //サブ画面へ移動
+        setContentView(R.layout.list_shop);
+    }
+    /************************************************
+        仲間（スカウト）
+     ************************************************/
+    public void onScout(View v){
+        //サブ画面へ移動
+        setContentView(R.layout.list_scout);
+        ListScoutDisp();
     }
     /************************************************
         ステータス（戦歴）
      ************************************************/
     public void onStatus(View v){
-        MyStory();
+
     }
 
 
@@ -579,6 +604,20 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 }
             });
         }
+    }
+
+
+    /************************************************
+         仲間（スカウト）表示処理
+     ************************************************/
+    public void ListScoutDisp(){
+
+    }
+    /************************************************
+         仲間（スカウト）メニューボタン処理
+     ************************************************/
+    public void onScoutMenu(View v){
+
     }
 
 

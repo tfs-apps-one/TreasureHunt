@@ -267,8 +267,74 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
 
 
     }
+    /***************************************************
+        福引券
+        お宝確率
+         t70     おにぎり
+         t71     どらやき
+         t72     とうもろこし
+         t73     フライドポテト
+         t74     イチゴ
+         t75     ケーキ
+         t76     バナナ
+         t77     ホットドッグ
+         t78     ぶどう
+         t79     大根
+     ****************************************************/
+    public int TreasureSelectLot() {
+        int type = 0;
+        /* 一旦、たべもの１０個とする */
+        type = rand.nextInt(10);
+        type += 70;
+        if (type == 80){
+            type = 79;
+        }
+        return type;
+    }
 
-    /* ---------------------------------------------
+    /***************************************************
+        スカウトベル
+        お宝確率
+        C011    金太郎
+        C012    サラリーマン
+        C013    アイドル
+        C014    消防士
+        C015    レンジャー
+
+        C20     お猿
+        C21     ハト
+        C22     かに
+        C23     クジャク
+        C24     なまけもの
+        C25     マンボウ
+        C26     たこ
+        C27     トナカイ
+        C28     カラス
+        C29     パンダ
+        C30     コアラ
+        C31     いか
+        C32     イルカ
+        C33     ねずみ
+        C34     ヒヨコ
+        C35     イノシシ
+        C36     ゾウ
+        C37     ぶた
+        C38     イヌ
+        C39     ネコ
+     ****************************************************/
+    public int TreasureSelectScoutBell() {
+        int type = 0;
+
+        /* 一旦、いきもの２０個とする */
+        type = rand.nextInt(20);
+        type += 20;
+        if (type == 40){
+            type = 39;
+        }
+        return type;
+    }
+
+    /***************************************************
         お宝確率
         40% お宝　直値で下記は激レア
             01:王冠　　激レア
@@ -276,8 +342,9 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
             03:絵画　　激レア
 
         　4〜40の間は、以下のパターン
-            10:お札   〜10
-            20:コイン  11〜40
+            11:コイン  〜11
+            12:ふくびき券
+            13:スカウトベル
 
         60% ガラクタ　以下の５パターン
             61:やかん
@@ -285,8 +352,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
             63:なべ
             64:新聞紙
             65:乾電池
-
-     --------------------------------------------- */
+    ****************************************************/
     public int TreasureSelect() {
         int type_1 = 0;
         int type_2 = 0;
@@ -317,11 +383,14 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
             }
             else {
                 type_2 = rand.nextInt(40);
-                if ( type_2 < 10){
-                    type = 10;
+                if (type_2 < 10){
+                    type = 11;
+                }
+                else if (type_2 >= 11 && type_2 <= 21){
+                    type = 12;
                 }
                 else{
-                    type = 20;
+                    type = 13;
                 }
             }
         }

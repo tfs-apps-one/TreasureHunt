@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ff999999"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout_10"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/text_title_l"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:background="@drawable/bak_1"
+            android:text=""
+            android:textColor="@color/white" />
+
+        <ScrollView
+            android:id="@+id/hist_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="5"
+            app:backgroundTint="@null"
+            android:background="@drawable/bak_1"
+            android:fillViewport="true"
+            android:scrollbarStyle="outsideOverlay"
+            app:layout_constraintHorizontal_bias="0.0">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/linearLayout_l201"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/box_list01"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_name_list01"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:text="金太郎"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <ImageView
+                        android:id="@+id/img_list01"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/c11"
+                        android:background="@color/white"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/text_material_list01"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|left"
+                        android:text="おにぎりｘ1"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout_l202"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/box_list02"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_name_list02"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:text="サラリーマン"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <ImageView
+                        android:id="@+id/img_list02"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/c12"
+                        android:background="@color/white"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/text_material_list02"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|left"
+                        android:text="お札ｘ10"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout_l203"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/box_list03"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_name_list03"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:text="アイドル"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <ImageView
+                        android:id="@+id/img_list03"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/c13"
+                        android:background="@color/white"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/text_material_list03"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|left"
+                        android:text="ファンレターｘ5"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout_l204"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/box_list04"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_name_list04"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <ImageView
+                        android:id="@+id/img_list04"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/c21"
+                        android:background="@color/white"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/text_material_list04"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/linearLayout_l205"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/box_list05"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_name_list05"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <ImageView
+                        android:id="@+id/img_list05"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/c22"
+                        android:background="@color/white"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/text_material_list05"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/linearLayout_l206"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/box_list06"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_name_list06"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <ImageView
+                        android:id="@+id/img_list06"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/c23"
+                        android:background="@color/white"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/text_material_list06"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout_l207"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/box_list07"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_name_list07"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <ImageView
+                        android:id="@+id/img_list07"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/c24"
+                        android:background="@color/white"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/text_material_list07"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout_l208"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/box_list08"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_name_list08"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <ImageView
+                        android:id="@+id/img_list08"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/c25"
+                        android:background="@color/white"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/text_material_list08"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout_l209"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/box_list09"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_name_list09"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <ImageView
+                        android:id="@+id/img_list09"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/c26"
+                        android:background="@color/white"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/text_material_list09"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linearLayout_l210"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal">
+
+                    <CheckBox
+                        android:id="@+id/box_list10"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/text_name_list10"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="1"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                    <ImageView
+                        android:id="@+id/img_list10"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:src="@drawable/c27"
+                        android:background="@color/white"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:id="@+id/text_material_list10"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|left"
+                        android:text=""
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        tools:ignore="SpeakableTextPresentCheck" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
