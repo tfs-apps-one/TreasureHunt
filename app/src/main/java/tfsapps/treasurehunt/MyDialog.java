@@ -19,7 +19,7 @@ public class MyDialog {
     public String _mess;
     public int _nextstep;
     public Context _context;
-
+    public int _icon;
     public MyDialog(Context context, String title, String mess, int nextstep){
         _context = context;
         _guide = new AlertDialog.Builder(context);
@@ -27,6 +27,16 @@ public class MyDialog {
         _title = "\n" + title + "\n";
         _mess = "\n\n\n" + mess + "\n\n\n";
         _nextstep = nextstep;
+    }
+
+    public MyDialog(Context context, String title, String mess, int nextstep, int icon){
+        _context = context;
+        _guide = new AlertDialog.Builder(context);
+        _text = new TextView(context);
+        _title = "\n" + title + "\n";
+        _mess = "\n\n\n" + mess + "\n\n\n";
+        _nextstep = nextstep;
+        _icon = icon;
     }
 
     @SuppressLint("ResourceAsColor")
@@ -39,6 +49,17 @@ public class MyDialog {
 
         _guide.setTitle(_title);
 //        _guide.setIcon(R.drawable.book2);
+
+/*        switch (_icon){
+            case 1: _guide.setIcon(R.drawable.t01); break;
+            case 2: _guide.setIcon(R.drawable.t02); break;
+            case 3: _guide.setIcon(R.drawable.t03); break;
+            case 4: _guide.setIcon(R.drawable.t04); break;
+            case 10: _guide.setIcon(R.drawable.t10); break;
+            case 11: _guide.setIcon(R.drawable.t11); break;
+            case 20: _guide.setIcon(R.drawable.t20); break;
+        }
+*/
         _guide.setView(_text);
         _guide.setPositiveButton( "OK" , new DialogInterface.OnClickListener() {
             @Override

@@ -268,6 +268,67 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
+    /* ---------------------------------------------
+        お宝確率
+        40% お宝　直値で下記は激レア
+            01:王冠　　激レア
+            02:指輪　　激レア
+            03:絵画　　激レア
+
+        　4〜40の間は、以下のパターン
+            10:お札   〜10
+            20:コイン  11〜40
+
+        60% ガラクタ　以下の５パターン
+            61:やかん
+            62:かさ
+            63:なべ
+            64:新聞紙
+            65:乾電池
+
+     --------------------------------------------- */
+    public int TreasureSelect() {
+        int type_1 = 0;
+        int type_2 = 0;
+        int type = 0;
+        type_1 = rand.nextInt(100);
+
+        //41~99  60%は「ガラクタ」
+        if (type_1 > 40){
+            type_2 = rand.nextInt(5);
+            switch (type_2){
+                case 0: type = 61; break;
+                case 1: type = 62; break;
+                case 2: type = 63; break;
+                case 3: type = 64; break;
+                case 4: type = 65; break;
+            }
+        }
+        //0~40   40%は「宝」
+        else{
+            if (type_1 == 1){
+                type = 1;
+            }
+            else if (type_1 == 2){
+                type = 2;
+            }
+            else if (type_1 == 3){
+                type = 3;
+            }
+            else {
+                type_2 = rand.nextInt(40);
+                if ( type_2 < 10){
+                    type = 10;
+                }
+                else{
+                    type = 20;
+                }
+            }
+        }
+
+        return type;
+    }
+
     // スタート位置
     public void InitialSetting(double i_ido, double i_kei){
         //  自身の位置
@@ -343,7 +404,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
                 continue;
             }*/
 
-            _type  = rand.nextInt(4);    // レア宝、宝、ガラクタ、ガラクタ
+            _type  = TreasureSelect();
             _x_pm = rand.nextInt(2);
             _y_pm = rand.nextInt(2);
 //            _x += 50;

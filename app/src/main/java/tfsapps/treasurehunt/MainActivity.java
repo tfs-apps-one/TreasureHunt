@@ -4,6 +4,7 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Canvas;
+import android.net.Uri;
 import android.os.Bundle;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     private boolean get_GPS = false;
 
+    private int db_story = 0;
     private MyDialog myDialog;
 
     private final ActivityResultLauncher<String>
@@ -293,23 +296,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         TextView txtstatus = findViewById(R.id.text_status);
         Button btn = findViewById(R.id.btn_start_end);
         if (this.mainTimer1 == null) {
-            txtstatus.setText("「START」を押して宝探しを開始して下さい");
+            txtstatus.setText("「START」を押して 宝探し を始める");
             btn.setText("START");
         }
         else{
-            String tmp =
-                    "\n赤：はじめの位置　青：いまの位置　" +
-                    "\n黄：お宝？の場所　緑：穴掘り開始　" +
-                    "\n\n";
-
-
+            String tmp ="";
             if (myMap.isHitTreasure()) {
-                tmp += "「スコップ」ボタンで穴掘り開始\n";
+                tmp += "\n「スコップ」ボタンで穴掘り開始\n";
             } else {
-                tmp += "お宝？の場所まで移動しよう・・・\n";
+                tmp += "\nお宝？の場所まで移動しよう・・・\n";
             }
-            btn.setText("END");
+            tmp += "\n赤：はじめの位置　青：いまの位置　" +
+                   "\n黄：お宝？の場所　緑：穴掘り開始　" +
+                   "";
+
             txtstatus.setText(tmp);
+            btn.setText("END");
             SubStamina();
         }
     }
@@ -380,10 +382,21 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         スコップ　ボタン（宝ザクザク）
      ************************************************/
     public void onSubScoop(View v){
-        MyDialog pop = new MyDialog(this, "穴掘り", "お宝ザクザク", 1);
+        if (this.mainTimer1 == null) {
+            return;
+        }
+        String message = "";
+        int id = 0;
+
+//        MyDialog pop = new MyDialog(this, "穴掘り", "お宝ザクザク", 1);
 
         if (myMap.isHitTreasure()){
-            pop.PopShow();
+            id = R.drawable.start;
+            message +=
+                    "【穴掘り】スタート\n\n"+
+                    " ・・・お宝ザクザク・・・\n"+
+                    "\n\n\n";
+            CustomDialog.showCustomDialog(this, id, message, 1);
 //           ScoopResult();
         }
         else{
@@ -393,36 +406,147 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     //結果
     public void ScoopResult(){
         int type = myMap.ZakuZakuResult();
-        MyDialog pop;
         //スタミナ減少
         db_stamina -= 10;
         if (db_stamina < 0){
             db_stamina = 0;
         }
+        String message = "";
+        int id = 0;
+        switch (type) {
+            case 1:
+                id = R.drawable.t01;
+                message += "神キター！！\n\n\nレア宝「王冠」を入手しました\n\n";
+                break;
+            case 2:
+                id = R.drawable.t02;
+                message += "神キター！！\n\n\nレア宝「指輪」を入手しました\n\n";
+                break;
+            case 3:
+                id = R.drawable.t03;
+                message += "神キター！！\n\n\nレア宝「絵画」を入手しました\n\n";
+                break;
+            case 10:
+                id = R.drawable.t10;
+                message += "やったー！！\n\n\nお宝「お札」を入手しました\n\n";
+                break;
+            case 20:
+                id = R.drawable.t20;
+                message += "やったー！！\n\n\nお宝「コイン」を入手しました\n\n";
+                break;
+            case 61:
+                id = R.drawable.t61;
+                message += "ざんねん\n\n\nガラクタ「やかん」を入手しました\n\n";
+                break;
+            case 62:
+                id = R.drawable.t62;
+                message += "ざんねん\n\n\nガラクタ「かさ」を入手しました\n\n";
+                break;
+            case 63:
+                id = R.drawable.t63;
+                message += "ざんねん\n\n\nガラクタ「なべ」を入手しました\n\n";
+                break;
+            case 64:
+                id = R.drawable.t64;
+                message += "ざんねん\n\n\nガラクタ「新聞紙」を入手しました\n\n";
+                break;
+            case 65:
+                id = R.drawable.t65;
+                message += "ざんねん\n\n\nガラクタ「乾電池」を入手しました\n\n";
+                break;
+        }
+        CustomDialog.showCustomDialog(this, id, message, 0);
+/*
+        switch (type) {
+            case 0:
+                CustomDialog.showCustomDialog(this, R.drawable.t20, "やったー！！　レア宝「王冠」");
+                break;
+            case 1:
+                CustomDialog.showCustomDialog(this, R.drawable.t10, "お宝　「コイン」");
+                break;
+            case 2:
+                CustomDialog.showCustomDialog(this, R.drawable.t01, "残念　ガラクタ「やかん」");
+                break;
+            case 3:
+                CustomDialog.showCustomDialog(this, R.drawable.t02, "残念　ガラクタ「かさ」");
+                break;
+        }
+ */
 
+/*
         switch (type){
             case 0:
-                pop = new MyDialog(this, "レア宝", "やったー！！", 0);
+                pop = new MyDialog(this, "レア宝", "やったー！！", 0, 20);
                 pop.PopShow();
                 break;
             case 1:
-                pop = new MyDialog(this, "普通宝", "普通だね！！", 0);
+                pop = new MyDialog(this, "普通宝", "普通だね！！", 0, 10);
                 pop.PopShow();
                 break;
             case 2:
-                pop = new MyDialog(this, "ガラクタ", "残念１ー！！", 0);
+                pop = new MyDialog(this, "ガラクタ", "残念１ー！！", 0, 1);
                 pop.PopShow();
                 break;
             case 3:
-                pop = new MyDialog(this, "ガラクタ２", "残念２ー！！", 0);
+                pop = new MyDialog(this, "ガラクタ２", "残念２ー！！", 0, 2);
                 pop.PopShow();
                 break;
 
             default:
                 break;
         }
+
+ */
     }
 
+    /************************************************
+        ストーリー
+     ************************************************/
+    public void MyStory(){
+        String message = "";
+        int id = 0;
+        int story = db_story;
+        int step = 0;
+        switch (story){
+            /* 冒険の始まり */
+            case 0:
+                id = R.drawable.c02;    step = 1;   db_story++;
+                message +=
+                        "王様：「勇者よ、そなたは今日で16才になった」\n" +
+                        "王様：「そこでお願いがある」\n" +
+                        "王様：「村人のため【鬼退治】をお願いしたい」\n\n";
+                break;
+            case 1:
+                id = R.drawable.c01;    step = 1;   db_story++;
+                message +=
+                        "勇者：「王様、私には無理です」\n" +
+                        "勇者：「私が臆病なのをご存知のはず・・・」\n" +
+                        "\n\n";
+                break;
+            case 2:
+                id = R.drawable.c02;    step = 1;   db_story++;
+                message +=
+                        "王様：「勇者よ、わかった」\n" +
+                        "王様：「そなたに【宝の地図、スコップ】を渡す」\n" +
+                        "王様：「穴を掘って宝を集め」\n" +
+                        "王様：「そしてその宝で仲間を集めるのだ」\n\n";
+                break;
+            case 3:
+                id = R.drawable.c01;    step = 0;   db_story++;
+                message +=
+                        "勇者：「王様、やっ・・・やってみます」\n" +
+                        "勇者：「まずは仲間を【10人】集めます」\n" +
+                        "勇者：「そして仲間と【鬼退治】へ行きます」\n" +
+                        "\n\n";
+                break;
+
+            default:
+                break;
+        }
+
+        CustomDialog.showCustomDialogStory(this, id, message, 1, step);
+        return;
+    }
 
 
     /************************************************
@@ -435,7 +559,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         ステータス（戦歴）
      ************************************************/
     public void onStatus(View v){
-
+        MyStory();
     }
 
 
