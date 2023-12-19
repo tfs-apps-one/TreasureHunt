@@ -295,11 +295,11 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     /***************************************************
         スカウトベル
         お宝確率
-        C011    金太郎
-        C012    サラリーマン
-        C013    アイドル
-        C014    消防士
-        C015    レンジャー
+        C051    金太郎
+        C052    サラリーマン
+        C053    アイドル
+        C054    消防士
+        C055    レンジャー
 
         C20     お猿
         C21     ハト
