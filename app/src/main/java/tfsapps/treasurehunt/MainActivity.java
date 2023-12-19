@@ -244,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         AppDBInitRoad();
 
 /*test_make*/
+
         db_data_1 = 1;
         db_data_2 = 1;
         db_data_3 = 1;
@@ -285,7 +286,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         db_data_77 = 1;
         db_data_78 = 1;
         db_data_79 = 1;
-
     }
     @Override
     public void onResume() {
@@ -358,12 +358,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 通知の最小距離の間隔
                 LocationListenerのインスタンス
          */
+
+        /*
         List<String> providers = locationManager.getProviders(true);
-        /* 並行して、３のプロバイダーを起動する */
+        // 並行して、３のプロバイダーを起動する
         for (String provider : providers){
             locationManager.requestLocationUpdates(provider,
                     1000, 3, this);
         }
+         */
+        /*
+        //  屋外はGPS_PEOVIDER
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                3000, 5, this);
+         */
+        //  屋外はGPS_PEOVIDER
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                3000, 3, this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                5000, 5, this);
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
+                5000, 7, this);
+
         get_GPS = true;
     }
 
@@ -498,13 +515,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             myMap.setCallback(this);
             lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
 
+            locationStart();
+
             //タイマーインスタンス生成
             this.mainTimer1 = new Timer();
             //タスククラスインスタンス生成
             this.mainTimerTask1 = new MainTimerTask();
             //タイマースケジュール設定＆開始
             //      this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
-            this.mainTimer1.schedule(mainTimerTask1, 1000, 5000);
+            //      this.mainTimer1.schedule(mainTimerTask1, 1000, 5000);
+            this.mainTimer1.schedule(mainTimerTask1, 0, 100);
         }
         //エンド
         else {
@@ -620,6 +640,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 break;
         }
         CustomDialog.showCustomDialog(this, id, message, step);
+        if (step == 0){
+            //入手PLUS
+            SetGameDbParam(type, 1);
+        }
     }
 
     /************************************************
@@ -646,6 +670,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         name = GetGameDataName(index);
         message += "やったー！！\n\n\nお宝「" +name + "」を入手しました\n\n";
         CustomDialog.showCustomDialog(this, id, message, 0);
+
+        //福引MINUS
+        SetGameDbParam(12, -1);
+        //入手PLUS
+        SetGameDbParam(index, 1);
     }
     /************************************************
         スカウトベル　を使用してアイテム入手
@@ -671,17 +700,52 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         name = GetGameDataName(index);
         message += "やったー！！\n\n\n「" +name + "」が仲間に加わりました\n\n";
         CustomDialog.showCustomDialog(this, id, message, 0);
+
+        //ベルMINUS
+        SetGameDbParam(13, -1);
+        //入手PLUS
+        SetGameDbParam(index, 1);
     }
 
 
     /************************************************
         ストーリー
      ************************************************/
-    public void MyStory(){
+    public void MyStory() {
         String message = "";
         int id = 0;
         int story = db_story;
         int step = 0;
+        int count = 0;
+
+        if (db_data_20 > 0) count++;
+        if (db_data_21 > 0) count++;
+        if (db_data_22 > 0) count++;
+        if (db_data_23 > 0) count++;
+        if (db_data_24 > 0) count++;
+        if (db_data_25 > 0) count++;
+        if (db_data_26 > 0) count++;
+        if (db_data_27 > 0) count++;
+        if (db_data_28 > 0) count++;
+        if (db_data_29 > 0) count++;
+        if (db_data_30 > 0) count++;
+        if (db_data_31 > 0) count++;
+        if (db_data_32 > 0) count++;
+        if (db_data_33 > 0) count++;
+        if (db_data_34 > 0) count++;
+        if (db_data_35 > 0) count++;
+        if (db_data_36 > 0) count++;
+        if (db_data_37 > 0) count++;
+        if (db_data_38 > 0) count++;
+        if (db_data_39 > 0) count++;
+
+        if (db_story == 4){
+            // 鬼退治
+            if (count >=10){
+                db_story = 5;
+            }
+        }
+
         switch (story){
             /* 冒険の始まり */
             case 0:
@@ -707,14 +771,103 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "王様：「そしてその宝で仲間を集めるのだ」\n\n";
                 break;
             case 3:
-                id = R.drawable.s001;    step = 0;   db_story++;
+                id = R.drawable.s001;    step = 0;  db_story++;
                 message +=
                         "勇者：「王様、やっ・・・やってみます」\n" +
-                        "勇者：「まずは仲間を【10人】集めます」\n" +
+                        "勇者：「まずは仲間を【10】集めます」\n" +
                         "勇者：「そして仲間と【鬼退治】へ行きます」\n" +
                         "\n\n";
                 break;
-
+            case 4:
+                id = R.drawable.s001;    step = 0;
+                message +=
+                        "勇者：「仲間は今のところ【"+count+"】だなぁ」\n" +
+                        "勇者：「鬼を退治には仲間は【10】必要だ」\n" +
+                        "勇者：「宝探しを続けよう」\n" +
+                        "\n\n";
+                break;
+            case 5:
+                id = R.drawable.s001;    step = 1;  db_story++;
+                message +=
+                        "勇者：「王様、仲間が【"+count+"】集まりました」\n" +
+                        "勇者：「鬼を退治に行きます」\n" +
+                        "\n" +
+                        "\n\n";
+                break;
+            case 6:
+                id = R.drawable.s002;    step = 1;  db_story++;
+                message +=
+                        "王様：「勇者よ、強そうな仲間たちじゃ」\n" +
+                        "王様：「村人のため鬼退治をたのむ」\n" +
+                        "\n" +
+                        "\n\n";
+                break;
+            case 7:
+                id = R.drawable.s001;    step = 1;  db_story++;
+                message +=
+                        "勇者：「では行ってきます！！」\n" +
+                        "\n" +
+                        "・・・こうして・・・勇者たちは鬼の所へ\n" +
+                        "\n\n";
+                break;
+            case 8:
+                id = R.drawable.s003;    step = 1;  db_story++;
+                message +=
+                        "赤鬼：「誰だー！！我を起こす者は？」\n" +
+                        "赤鬼：「弱い人間が我に勝てるのか？」\n" +
+                        "\n" +
+                        "\n\n";
+                break;
+            case 9:
+                id = R.drawable.s001;    step = 1;  db_story++;
+                message +=
+                        "勇者：「こっ恐い〜〜〜汗」\n" +
+                        "勇者：「仲間たちに頼むしかない」\n" +
+                        "勇者：「みんな鬼退治をよろしく！！」\n" +
+                        "\n\n";
+                break;
+            case 10:
+                id = R.drawable.s001;    step = 1;  db_story++;
+                message +=
+                        "・・・ドドドドォー！！・・・\n" +
+                        "（仲間たちが一斉に鬼へ飛び込んだ）\n" +
+                        "\n" +
+                        "\n\n";
+                break;
+            case 11:
+                id = R.drawable.s003;    step = 1;  db_story++;
+                message +=
+                        "赤鬼：「ひぇー！！敵わない」\n" +
+                        "赤鬼：「逃げろぉ・・・・」\n" +
+                        "（鬼は泣きながら逃げていく）\n" +
+                        "\n\n";
+                break;
+            case 12:
+                id = R.drawable.s001;    step = 1;  db_story++;
+                message +=
+                        "勇者：「やったー！！鬼を退治できた」\n" +
+                        "勇者：「みんなありがとう♪」\n\n" +
+                        "・・・（勇者は王様の所へ）・・・\n" +
+                        "\n";
+                break;
+            case 13:
+                id = R.drawable.s002;    step = 1;  db_story++;
+                message +=
+                        "王様：「勇者とその仲間たち・・・」\n" +
+                        "王様：「鬼退治ありがとう！！」\n" +
+                        "王様：「村人たちも安心じゃ」\n" +
+                        "\n\n";
+                break;
+            case 14:
+                id = R.drawable.info;    step = 0;
+                message +=
+                        "・・・おめでとう！！・・・\n" +
+                        "「鬼退治」編クリアです\n" +
+                        "\n"+
+                        "まだ見つけていない\n"+
+                        "激レア・アイテム・仲間を集めてみては？\n" +
+                        "\n\n";
+                break;
             default:
                 break;
         }
@@ -758,7 +911,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             //ここに定周期で実行したい処理を記述します
             mHandler.post(new Runnable() {
                 public void run() {
-                    locationStart();
+                    if (get_GPS == false) {
+                        locationStart();
+                    }
                     SubShow();
                 }
             });
@@ -1164,19 +1319,70 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         return icon;
     }
 
+    /************************************************
+         ゲームデータのデータアクセス
+     ************************************************/
+    public void SetGameDbParam(int index, int data) {
+
+        switch (index) {
+            case 1: db_data_1 += data; break;
+            case 2: db_data_2 += data; break;
+            case 3: db_data_3 += data; break;
+            case 11: db_data_11 += data; break;
+            case 12: db_data_12 += data; break;
+            case 13: db_data_13 += data; break;
+            case 20: db_data_20 += data; break;
+            case 21: db_data_21 += data; break;
+            case 22: db_data_22 += data; break;
+            case 23: db_data_23 += data; break;
+            case 24: db_data_24 += data; break;
+            case 25: db_data_25 += data; break;
+            case 26: db_data_26 += data; break;
+            case 27: db_data_27 += data; break;
+            case 28: db_data_28 += data; break;
+            case 29: db_data_29 += data; break;
+            case 30: db_data_30 += data; break;
+            case 31: db_data_31 += data; break;
+            case 32: db_data_32 += data; break;
+            case 33: db_data_33 += data; break;
+            case 34: db_data_34 += data; break;
+            case 35: db_data_35 += data; break;
+            case 36: db_data_36 += data; break;
+            case 37: db_data_37 += data; break;
+            case 38: db_data_38 += data; break;
+            case 39: db_data_39 += data; break;
+            case 61: db_data_61 += data; break;
+            case 62: db_data_62 += data; break;
+            case 63: db_data_63 += data; break;
+            case 64: db_data_64 += data; break;
+            case 65: db_data_65 += data; break;
+            case 70: db_data_70 += data; break;
+            case 71: db_data_71 += data; break;
+            case 72: db_data_72 += data; break;
+            case 73: db_data_73 += data; break;
+            case 74: db_data_74 += data; break;
+            case 75: db_data_75 += data; break;
+            case 76: db_data_76 += data; break;
+            case 77: db_data_77 += data; break;
+            case 78: db_data_78 += data; break;
+            case 79: db_data_79 += data; break;
+            default:break;
+        }
+    }
+
     /***************************************************
-     福引券
-     お宝確率
-     t70     おにぎり
-     t71     どらやき
-     t72     とうもろこし
-     t73     フライドポテト
-     t74     イチゴ
-     t75     ケーキ
-     t76     バナナ
-     t77     ホットドッグ
-     t78     ぶどう
-     t79     大根
+         福引券
+         お宝確率
+         t70     おにぎり
+         t71     どらやき
+         t72     とうもろこし
+         t73     フライドポテト
+         t74     イチゴ
+         t75     ケーキ
+         t76     バナナ
+         t77     ホットドッグ
+         t78     ぶどう
+         t79     大根
      ****************************************************/
     public int TreasureSelectLot() {
         int type = 0;
@@ -1190,34 +1396,34 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
     /***************************************************
-     スカウトベル
-     お宝確率
-     C051    金太郎
-     C052    サラリーマン
-     C053    アイドル
-     C054    消防士
-     C055    レンジャー
+         スカウトベル
+         お宝確率
+         C051    金太郎
+         C052    サラリーマン
+         C053    アイドル
+         C054    消防士
+         C055    レンジャー
 
-     C20     お猿
-     C21     ハト
-     C22     かに
-     C23     クジャク
-     C24     なまけもの
-     C25     マンボウ
-     C26     たこ
-     C27     トナカイ
-     C28     カラス
-     C29     パンダ
-     C30     コアラ
-     C31     いか
-     C32     イルカ
-     C33     ねずみ
-     C34     ヒヨコ
-     C35     イノシシ
-     C36     ゾウ
-     C37     ぶた
-     C38     イヌ
-     C39     ネコ
+         C20     お猿
+         C21     ハト
+         C22     かに
+         C23     クジャク
+         C24     なまけもの
+         C25     マンボウ
+         C26     たこ
+         C27     トナカイ
+         C28     カラス
+         C29     パンダ
+         C30     コアラ
+         C31     いか
+         C32     イルカ
+         C33     ねずみ
+         C34     ヒヨコ
+         C35     イノシシ
+         C36     ゾウ
+         C37     ぶた
+         C38     イヌ
+         C39     ネコ
      ****************************************************/
     public int TreasureSelectScoutBell() {
         int type = 0;
@@ -1367,7 +1573,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         sql.append(" ,data_98");
         sql.append(" ,data_99");
         sql.append(" ,data_100");
-        sql.append(" FROM appinfo;");
+        sql.append(" FROM appinfo2;");
         try {
             Cursor cursor = db.rawQuery(sql.toString(), null);
             //TextViewに表示
@@ -1630,7 +1836,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             insertValues.put("data_99", 0);
             insertValues.put("data_100", 0);
             try {
-                ret = db.insert("appinfo", null, insertValues);
+                ret = db.insert("appinfo2", null, insertValues);
             } finally {
                 db.close();
             }
@@ -1784,7 +1990,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
         int ret;
         try {
-            ret = db.update("appinfo", insertValues, null, null);
+            ret = db.update("appinfo2", insertValues, null, null);
         } finally {
             db.close();
         }

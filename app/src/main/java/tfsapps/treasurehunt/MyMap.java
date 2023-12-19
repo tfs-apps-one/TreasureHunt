@@ -111,7 +111,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
                 paint.setColor(Color.argb(255, 100, 255, 100));
             }
             else{
-                paint.setColor(Color.argb(255, 100, 190, 100));
+                paint.setColor(Color.argb(255, 200, 245, 245));
             }
             if (_blink > 100)   _blink = 0;
         }
