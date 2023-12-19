@@ -37,6 +37,26 @@ public class CustomDialog {
                         ((MainActivity) context).ScoopResult();
                     }
                 }
+                else if (step == 11){
+                    if (context instanceof MainActivity) {
+                        ((MainActivity) context).LotDone();
+                    }
+                }
+                else if (step == 21){
+                    if (context instanceof MainActivity) {
+                        ((MainActivity) context).ScoutDone();
+                    }
+                }
+                else if (step == 12){
+                    if (context instanceof MainActivity) {
+                        ((MainActivity) context).LotResult();
+                    }
+                }
+                else if (step == 22){
+                    if (context instanceof MainActivity) {
+                        ((MainActivity) context).ScoutResult();
+                    }
+                }
                 return;
             }
         });

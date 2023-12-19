@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private MainTimerTask mainTimerTask1;		//タイマタスククラス
     private Handler mHandler = new Handler();   //UI Threadへのpost用ハンドラ
 
+    private final Random rand = new Random(System.currentTimeMillis());
+
     private double ini_ido = 0.0f;         //今回の位置
     private double ini_keido = 0.0f;       //今回の位置
     private double now_ido = 0.0f;         //今回の位置
@@ -545,9 +547,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
         String message = "";
         int id = 0;
-
-//        MyDialog pop = new MyDialog(this, "穴掘り", "お宝ザクザク", 1);
-
         if (myMap.isHitTreasure()){
             id = R.drawable.start;
             message +=
@@ -571,6 +570,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
         String message = "";
         int id = 0;
+        int step = 0;
         switch (type) {
             case 1:
                 id = R.drawable.t01;
@@ -589,10 +589,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 message += "やったー！！\n\n\nお宝「コイン」を入手しました\n\n";
                 break;
             case 12:
+                step = 11;
                 id = R.drawable.t12;
-                message += "やったー！！\n\n\nお宝「福引券」を入手しました\n\n";
+                message += "やったー！！\n\n\nお宝「福引き券」を入手しました\n\n";
                 break;
             case 13:
+                step = 21;
                 id = R.drawable.t13;
                 message += "やったー！！\n\n\nお宝「スカウトベル」を入手しました\n\n";
                 break;
@@ -617,49 +619,60 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 message += "ざんねん\n\n\nガラクタ「乾電池」を入手しました\n\n";
                 break;
         }
-        CustomDialog.showCustomDialog(this, id, message, 0);
-/*
-        switch (type) {
-            case 0:
-                CustomDialog.showCustomDialog(this, R.drawable.t20, "やったー！！　レア宝「王冠」");
-                break;
-            case 1:
-                CustomDialog.showCustomDialog(this, R.drawable.t10, "お宝　「コイン」");
-                break;
-            case 2:
-                CustomDialog.showCustomDialog(this, R.drawable.t01, "残念　ガラクタ「やかん」");
-                break;
-            case 3:
-                CustomDialog.showCustomDialog(this, R.drawable.t02, "残念　ガラクタ「かさ」");
-                break;
-        }
- */
-
-/*
-        switch (type){
-            case 0:
-                pop = new MyDialog(this, "レア宝", "やったー！！", 0, 20);
-                pop.PopShow();
-                break;
-            case 1:
-                pop = new MyDialog(this, "普通宝", "普通だね！！", 0, 10);
-                pop.PopShow();
-                break;
-            case 2:
-                pop = new MyDialog(this, "ガラクタ", "残念１ー！！", 0, 1);
-                pop.PopShow();
-                break;
-            case 3:
-                pop = new MyDialog(this, "ガラクタ２", "残念２ー！！", 0, 2);
-                pop.PopShow();
-                break;
-
-            default:
-                break;
-        }
-
- */
+        CustomDialog.showCustomDialog(this, id, message, step);
     }
+
+    /************************************************
+         福引き券　を使用してアイテム入手
+     ************************************************/
+    public void LotDone(){
+        String message = "";
+        int id = 0;
+        id = R.drawable.t12;
+        message +=
+                "【福引き券ｘ1】を使用して\nお宝GETだぜ\n\n"+
+                        " ・・・何が出るかなぁ？・・・\n"+
+                        "\n\n\n";
+        CustomDialog.showCustomDialog(this, id, message, 12);
+    }
+    //結果
+    public void LotResult() {
+        String message = "";
+        int id = 0;
+        int index;
+        String name = "";
+        index = TreasureSelectLot();
+        id = GetGameIcon(index);
+        name = GetGameDataName(index);
+        message += "やったー！！\n\n\nお宝「" +name + "」を入手しました\n\n";
+        CustomDialog.showCustomDialog(this, id, message, 0);
+    }
+    /************************************************
+        スカウトベル　を使用してアイテム入手
+     ************************************************/
+    public void ScoutDone(){
+        String message = "";
+        int id = 0;
+        id = R.drawable.t13;
+        message +=
+                "【スカウトベルｘ1】を使用して\n仲間GETだぜ\n\n"+
+                        " ・・・だれが来るかなぁ？・・・\n"+
+                        "\n\n\n";
+        CustomDialog.showCustomDialog(this, id, message, 22);
+    }
+    //結果
+    public void ScoutResult() {
+        String message = "";
+        int id = 0;
+        int index;
+        String name = "";
+        index = TreasureSelectScoutBell();
+        id = GetGameIcon(index);
+        name = GetGameDataName(index);
+        message += "やったー！！\n\n\n「" +name + "」が仲間に加わりました\n\n";
+        CustomDialog.showCustomDialog(this, id, message, 0);
+    }
+
 
     /************************************************
         ストーリー
@@ -750,59 +763,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 }
             });
         }
-    }
-
-    /************************************************
-         ゲームのアイテム、キャラクターの名前取得
-     ************************************************/
-    public String GetGameDataName(int index){
-        String name = "？？？";
-
-        switch (index){
-            case 1: name = "王冠"; break;
-            case 2: name = "指輪"; break;
-            case 3: name = "絵画"; break;
-            case 11: name = "コイン"; break;
-            case 12: name = "福引き券"; break;
-            case 13: name = "スカウトベル"; break;
-            case 20: name = "お猿"; break;
-            case 21: name = "ハト"; break;
-            case 22: name = "かに"; break;
-            case 23: name = "クジャク"; break;
-            case 24: name = "なまけもの"; break;
-            case 25: name = "マンボウ"; break;
-            case 26: name = "タコ"; break;
-            case 27: name = "トナカイ"; break;
-            case 28: name = "カラス"; break;
-            case 29: name = "パンダ"; break;
-            case 30: name = "コアラ"; break;
-            case 31: name = "イカ"; break;
-            case 32: name = "イルカ"; break;
-            case 33: name = "ねずみ"; break;
-            case 34: name = "ヒヨコ"; break;
-            case 35: name = "イノシシ"; break;
-            case 36: name = "ゾウ"; break;
-            case 37: name = "ぶた"; break;
-            case 38: name = "イヌ"; break;
-            case 39: name = "ねこ"; break;
-            case 61: name = "やかん"; break;
-            case 62: name = "かさ"; break;
-            case 63: name = "なべ"; break;
-            case 64: name = "新聞紙"; break;
-            case 65: name = "乾電池"; break;
-            case 70: name = "おにぎり"; break;
-            case 71: name = "どらやき"; break;
-            case 72: name = "とうもろこし"; break;
-            case 73: name = "フライドポテト"; break;
-            case 74: name = "いちご"; break;
-            case 75: name = "ケーキ"; break;
-            case 76: name = "バナナ"; break;
-            case 77: name = "ホットドッグ"; break;
-            case 78: name = "ぶどう"; break;
-            case 79: name = "大根"; break;
-        }
-
-        return name;
     }
 
     /************************************************
@@ -1097,6 +1057,180 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     public void onScoutMenu(View v){
         setContentView(R.layout.activity_main);
     }
+
+
+    /************************************************
+         ゲームのアイテム、キャラクターの名前取得
+     ************************************************/
+    public String GetGameDataName(int index){
+        String name = "？？？";
+
+        switch (index){
+            case 1: name = "王冠"; break;
+            case 2: name = "指輪"; break;
+            case 3: name = "絵画"; break;
+            case 11: name = "コイン"; break;
+            case 12: name = "福引き券"; break;
+            case 13: name = "スカウトベル"; break;
+            case 20: name = "お猿"; break;
+            case 21: name = "ハト"; break;
+            case 22: name = "かに"; break;
+            case 23: name = "クジャク"; break;
+            case 24: name = "なまけもの"; break;
+            case 25: name = "マンボウ"; break;
+            case 26: name = "タコ"; break;
+            case 27: name = "トナカイ"; break;
+            case 28: name = "カラス"; break;
+            case 29: name = "パンダ"; break;
+            case 30: name = "コアラ"; break;
+            case 31: name = "イカ"; break;
+            case 32: name = "イルカ"; break;
+            case 33: name = "ねずみ"; break;
+            case 34: name = "ヒヨコ"; break;
+            case 35: name = "イノシシ"; break;
+            case 36: name = "ゾウ"; break;
+            case 37: name = "ぶた"; break;
+            case 38: name = "イヌ"; break;
+            case 39: name = "ねこ"; break;
+            case 61: name = "やかん"; break;
+            case 62: name = "かさ"; break;
+            case 63: name = "なべ"; break;
+            case 64: name = "新聞紙"; break;
+            case 65: name = "乾電池"; break;
+            case 70: name = "おにぎり"; break;
+            case 71: name = "どらやき"; break;
+            case 72: name = "とうもろこし"; break;
+            case 73: name = "フライドポテト"; break;
+            case 74: name = "いちご"; break;
+            case 75: name = "ケーキ"; break;
+            case 76: name = "バナナ"; break;
+            case 77: name = "ホットドッグ"; break;
+            case 78: name = "ぶどう"; break;
+            case 79: name = "大根"; break;
+        }
+
+        return name;
+    }
+    /************************************************
+     ゲームのアイテム、キャラクターの icon image 取得
+     ************************************************/
+    public int GetGameIcon(int index){
+        int icon = R.drawable.t999;
+
+        switch (index){
+            case 1: icon = R.drawable.t01;  break;
+            case 2: icon = R.drawable.t02;  break;
+            case 3: icon = R.drawable.t03;  break;
+            case 11: icon = R.drawable.t11;  break;
+            case 12: icon = R.drawable.t12;  break;
+            case 13: icon = R.drawable.t13;  break;
+            case 20: icon = R.drawable.c20;  break;
+            case 21: icon = R.drawable.c21;  break;
+            case 22: icon = R.drawable.c22;  break;
+            case 23: icon = R.drawable.c23;  break;
+            case 24: icon = R.drawable.c24;  break;
+            case 25: icon = R.drawable.c25;  break;
+            case 26: icon = R.drawable.c26;  break;
+            case 27: icon = R.drawable.c27;  break;
+            case 28: icon = R.drawable.c28;  break;
+            case 29: icon = R.drawable.c29;  break;
+            case 30: icon = R.drawable.c30;  break;
+            case 31: icon = R.drawable.c31;  break;
+            case 32: icon = R.drawable.c32;  break;
+            case 33: icon = R.drawable.c33;  break;
+            case 34: icon = R.drawable.c34;  break;
+            case 35: icon = R.drawable.c35;  break;
+            case 36: icon = R.drawable.c36;  break;
+            case 37: icon = R.drawable.c37;  break;
+            case 38: icon = R.drawable.c38;  break;
+            case 39: icon = R.drawable.c39;  break;
+            case 61: icon = R.drawable.t61;  break;
+            case 62: icon = R.drawable.t62;  break;
+            case 63: icon = R.drawable.t63;  break;
+            case 64: icon = R.drawable.t64;  break;
+            case 65: icon = R.drawable.t65;  break;
+            case 70: icon = R.drawable.t70;  break;
+            case 71: icon = R.drawable.t71;  break;
+            case 72: icon = R.drawable.t72;  break;
+            case 73: icon = R.drawable.t73;  break;
+            case 74: icon = R.drawable.t74;  break;
+            case 75: icon = R.drawable.t75;  break;
+            case 76: icon = R.drawable.t76;  break;
+            case 77: icon = R.drawable.t77;  break;
+            case 78: icon = R.drawable.t78;  break;
+            case 79: icon = R.drawable.t79;  break;
+        }
+
+        return icon;
+    }
+
+    /***************************************************
+     福引券
+     お宝確率
+     t70     おにぎり
+     t71     どらやき
+     t72     とうもろこし
+     t73     フライドポテト
+     t74     イチゴ
+     t75     ケーキ
+     t76     バナナ
+     t77     ホットドッグ
+     t78     ぶどう
+     t79     大根
+     ****************************************************/
+    public int TreasureSelectLot() {
+        int type = 0;
+        /* 一旦、たべもの１０個とする */
+        type = rand.nextInt(10);
+        type += 70;
+        if (type == 80){
+            type = 79;
+        }
+        return type;
+    }
+
+    /***************************************************
+     スカウトベル
+     お宝確率
+     C051    金太郎
+     C052    サラリーマン
+     C053    アイドル
+     C054    消防士
+     C055    レンジャー
+
+     C20     お猿
+     C21     ハト
+     C22     かに
+     C23     クジャク
+     C24     なまけもの
+     C25     マンボウ
+     C26     たこ
+     C27     トナカイ
+     C28     カラス
+     C29     パンダ
+     C30     コアラ
+     C31     いか
+     C32     イルカ
+     C33     ねずみ
+     C34     ヒヨコ
+     C35     イノシシ
+     C36     ゾウ
+     C37     ぶた
+     C38     イヌ
+     C39     ネコ
+     ****************************************************/
+    public int TreasureSelectScoutBell() {
+        int type = 0;
+
+        /* 一旦、いきもの２０個とする */
+        type = rand.nextInt(20);
+        type += 20;
+        if (type == 40){
+            type = 39;
+        }
+        return type;
+    }
+
 
 
     /***************************************************

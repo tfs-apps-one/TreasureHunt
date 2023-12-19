@@ -267,72 +267,6 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
 
 
     }
-    /***************************************************
-        福引券
-        お宝確率
-         t70     おにぎり
-         t71     どらやき
-         t72     とうもろこし
-         t73     フライドポテト
-         t74     イチゴ
-         t75     ケーキ
-         t76     バナナ
-         t77     ホットドッグ
-         t78     ぶどう
-         t79     大根
-     ****************************************************/
-    public int TreasureSelectLot() {
-        int type = 0;
-        /* 一旦、たべもの１０個とする */
-        type = rand.nextInt(10);
-        type += 70;
-        if (type == 80){
-            type = 79;
-        }
-        return type;
-    }
-
-    /***************************************************
-        スカウトベル
-        お宝確率
-        C051    金太郎
-        C052    サラリーマン
-        C053    アイドル
-        C054    消防士
-        C055    レンジャー
-
-        C20     お猿
-        C21     ハト
-        C22     かに
-        C23     クジャク
-        C24     なまけもの
-        C25     マンボウ
-        C26     たこ
-        C27     トナカイ
-        C28     カラス
-        C29     パンダ
-        C30     コアラ
-        C31     いか
-        C32     イルカ
-        C33     ねずみ
-        C34     ヒヨコ
-        C35     イノシシ
-        C36     ゾウ
-        C37     ぶた
-        C38     イヌ
-        C39     ネコ
-     ****************************************************/
-    public int TreasureSelectScoutBell() {
-        int type = 0;
-
-        /* 一旦、いきもの２０個とする */
-        type = rand.nextInt(20);
-        type += 20;
-        if (type == 40){
-            type = 39;
-        }
-        return type;
-    }
 
     /***************************************************
         お宝確率
@@ -395,7 +329,14 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
-        return type;
+/*test_make*/
+        if ( type_1 > 50 ){
+            return 12;
+        }
+        else {
+            return 13;
+        }
+//        return type;
     }
 
     // スタート位置
