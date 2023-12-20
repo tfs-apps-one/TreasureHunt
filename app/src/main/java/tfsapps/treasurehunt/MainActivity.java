@@ -9,11 +9,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.pm.PackageManager;
@@ -378,12 +380,21 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
          */
         //  屋外はGPS_PEOVIDER
 
+        /* 以下は更新が激しい　2023.12.20 */
+        /*
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 3000, 3, this);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                 5000, 5, this);
         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
                 5000, 7, this);
+        */
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                5000, 5, this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                7000, 10, this);
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
+                7000, 10, this);
 
         get_GPS = true;
     }
@@ -408,6 +419,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         ido = location.getLatitude();
         keido = location.getLongitude();
 
+        if ( bak1_ido != 0.0f && bak1_keido != 0.0f) {
+            if (myMap.UpdatePositionOK(bak1_ido, bak1_keido, ido, keido) == false) {
+                /* 前回からの移動が多く見送り */
+                SubPosition(2);
+                return;
+            }
+        }
+
         Toast toast = Toast.makeText(this,
                 "UPDATE！！\n" + "緯度：" + ido + "　経度：" + keido, Toast.LENGTH_SHORT);
         toast.show();
@@ -425,6 +444,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             myMap.UpdatePosition(now_ido, now_keido);
         }
 //        setContentView(R.layout.activity_sub);
+
+        SubPosition(1);
     }
 
     @Override
@@ -438,14 +459,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
     /************************************************
-     物語
+         物語
      ************************************************/
     public void onGameStory(View v) {
         MyStory();
     }
 
     /************************************************
-     ゲームスタート
+         ゲームスタート
      ************************************************/
     public void onGameScreen(View v) {
         String message = "";
@@ -476,9 +497,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         ImageButton imgBtn = findViewById(R.id.btn_img_scoop);
         TextView txtstatus = findViewById(R.id.text_status);
         Button btn = findViewById(R.id.btn_start_end);
+
         if (this.mainTimer1 == null) {
             txtstatus.setText("「START」を押して 宝探し を始める");
             btn.setText("START");
+            SubPosition(0);
         } else {
             String tmp = "";
             if (myMap.isHitTreasure()) {
@@ -493,11 +516,35 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             txtstatus.setText(tmp);
             btn.setText("END");
             SubStamina();
+            SubPosition(0);
+        }
+    }
+    /************************************************
+         POSITION　イメージ
+        引数：　0　取得前、1　取得後、2　異常（15m以上離れた時の通知用）
+     ************************************************/
+    public void SubPosition(int type){
+        ImageView imgPos = findViewById(R.id.img_position);
+        imgPos.setBackgroundTintList(null);
+        switch (type) {
+            default:
+            case 0:
+                imgPos.setBackgroundColor(Color.WHITE);
+                imgPos.setImageResource(R.drawable.pos_0);
+                break;
+            case 1:
+                imgPos.setBackgroundColor(Color.WHITE);
+                imgPos.setImageResource(R.drawable.pos_1);
+                break;
+            case 2:
+                imgPos.setBackgroundColor(Color.RED);
+                imgPos.setImageResource(R.drawable.pos_1);
+                break;
         }
     }
 
     /************************************************
-     スタミナゲージ
+        スタミナゲージ
      ************************************************/
     public void SubStamina() {
         ProgressBar bar = findViewById(R.id.progress_stamina);
@@ -510,7 +557,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
     /************************************************
-       スタート／エンド　ボタン
+        スタート／エンド　ボタン
      ************************************************/
     public void GameEndDone(){
         db_stamina -= 10;
@@ -541,7 +588,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             //タイマースケジュール設定＆開始
             //      this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
             //      this.mainTimer1.schedule(mainTimerTask1, 1000, 5000);
-            this.mainTimer1.schedule(mainTimerTask1, 0, 100);
+            this.mainTimer1.schedule(mainTimerTask1, 0, 300);
         }
         //エンド
         else {
@@ -558,7 +605,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
     /************************************************
-     宝探しゲーム　終了処理
+        宝探しゲーム　終了処理
      ************************************************/
     public void gameClear() {
         if (this.mainTimer1 != null) {
@@ -577,14 +624,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
     /************************************************
-     サブ画面のメニュー　ボタン
+        サブ画面のメニュー　ボタン
      ************************************************/
     public void onSubMenu(View v) {
         gameClear();
         setContentView(R.layout.activity_main);
     }
     /************************************************
-     スコップ　ボタン（宝ザクザク）
+        スコップ　ボタン（宝ザクザク）
      ************************************************/
     //スタミナ回復処理（報酬動画閲覧後）
     public void StaminaRecovery(){
@@ -913,12 +960,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             case 14:
                 id = R.drawable.info;    step = 0;
                 message +=
-                        "・・・おめでとう！！・・・\n" +
+                        "＊＊＊＊　おめでとう　＊＊＊＊\n\n" +
                         "「鬼退治」編クリアです\n" +
                         "\n"+
                         "まだ見つけていない\n"+
                         "激レア・アイテム・仲間を集めてみては？\n" +
-                        "\n\n";
+                        "\n";
                 break;
             default:
                 break;
@@ -945,10 +992,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         ListScoutDisp();
     }
     /************************************************
-        ステータス（戦歴）
+        村（宿屋・福引き・仲間集め）
      ************************************************/
-    public void onStatus(View v){
-
+    public void onTown(View v){
+        setContentView(R.layout.list_town);
     }
 
 

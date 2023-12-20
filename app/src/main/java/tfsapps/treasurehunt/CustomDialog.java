@@ -75,7 +75,7 @@ public class CustomDialog {
         // メッセージを設定
         TextView textView = view.findViewById(R.id.textView);
         textView.setText(message);
-        textView.setTextSize(13);
+        textView.setTextSize(14);
         textView.setGravity(Gravity.TOP | Gravity.LEFT);
         // ダイアログを表示
 //        builder.setPositiveButton("OK", null); // ボタンのリスナーを設定する場合はここに追加
@@ -130,7 +130,7 @@ public class CustomDialog {
         // メッセージを設定
         TextView textView = view.findViewById(R.id.textView);
         textView.setText(message);
-        textView.setTextSize(13);
+        textView.setTextSize(14);
         textView.setGravity(Gravity.TOP | Gravity.LEFT);
 
         // ダイアログを表示

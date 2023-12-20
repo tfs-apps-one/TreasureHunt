@@ -40,6 +40,8 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     final double KEIDO_1M = 0.000010966382364;
     final double IDO_20M = (0.000008983148616 * 20.0f);
     final double KEIDO_20M = (0.000010966382364 * 20.0f);
+    final double IDO_15M = (0.000008983148616 * 15.0f);
+    final double KEIDO_15M = (0.000010966382364 * 15.0f);
 
     final double IDO_100M = (0.000008983148616 * 100.0f);
     final double KEIDO_100M = (0.000010966382364 * 100.0f);
@@ -442,6 +444,20 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
             treasuresList.add(my_treasure);
         }
 
+    }
+
+    //　更新位置のチェック　15m以上の移動があった場合は更新を見送る
+    public boolean UpdatePositionOK(double n_ido, double n_kei, double t_ido, double t_kei){
+
+        /* 緯度の移動が適切か？ */
+        if (t_ido < (n_ido - IDO_15M) || (n_ido + IDO_15M) < t_ido){
+            return false;
+        }
+        /* 経度の移動が適切か？ */
+        if (t_kei < (n_kei - KEIDO_15M) || (n_kei + KEIDO_15M) < t_kei){
+            return false;
+        }
+        return true;
     }
 
     // スタート位置
