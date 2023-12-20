@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 //    private final Random rand = new Random(System.currentTimeMillis());
 
     //　スレッド処理
-    private Timer mainTimer1;					//タイマー用
-    private MainTimerTask mainTimerTask1;		//タイマタスククラス
+    private Timer mainTimer1;                    //タイマー用
+    private MainTimerTask mainTimerTask1;        //タイマタスククラス
     private Handler mHandler = new Handler();   //UI Threadへのpost用ハンドラ
 
     private final Random rand = new Random(System.currentTimeMillis());
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private int db_scoop = 0;               //DB
     private int db_goggles = 0;             //DB
     private int db_ore_1 = 0;               //DB
-    private int db_ore_2= 0;                //DB
+    private int db_ore_2 = 0;                //DB
     private int db_ore_3 = 0;               //DB
     private int db_item_1 = 0;              //DB
     private int db_item_2 = 0;              //DB
@@ -231,9 +231,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 //            locationStart();
         }
     }
+
     /**
      * OS関連処理
-     *
      */
     @Override
     public void onStart() {
@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         helper = new MyOpenHelper(this);
         AppDBInitRoad();
 
-/*test_make*/
+        /*test_make*/
 
         db_data_1 = 1;
         db_data_2 = 1;
@@ -287,25 +287,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         db_data_78 = 1;
         db_data_79 = 1;
     }
+
     @Override
     public void onResume() {
         super.onResume();
         //動画
     }
+
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         //  DB更新
         AppDBUpdated();
     }
+
     @Override
-    public void onStop(){
+    public void onStop() {
         super.onStop();
         //  DB更新
         AppDBUpdated();
     }
+
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         //  DB更新
         AppDBUpdated();
@@ -390,14 +394,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         double ido = 0.0f;
         double keido = 0.0f;
 
-        if (this.mainTimer1 == null){
+        if (this.mainTimer1 == null) {
             return;
         }
 
-        if (get_GPS == true){
+        if (get_GPS) {
             get_GPS = false;
-        }
-        else{
+        } else {
             /* 取得ずみのためスキップ */
             return;
         }
@@ -406,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         keido = location.getLongitude();
 
         Toast toast = Toast.makeText(this,
-                "UPDATE！！\n"+"緯度："+ido+"　経度："+keido, Toast.LENGTH_SHORT);
+                "UPDATE！！\n" + "緯度：" + ido + "　経度：" + keido, Toast.LENGTH_SHORT);
         toast.show();
 
         bak1_ido = now_ido;
@@ -414,12 +417,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         now_ido = location.getLatitude();
         now_keido = location.getLongitude();
 
-        if (ini_ido == 0.0f || ini_keido == 0.0f){
+        if (ini_ido == 0.0f || ini_keido == 0.0f) {
             ini_ido = now_ido;
             ini_keido = now_keido;
             myMap.InitialSetting(ini_ido, ini_keido);
-        }
-        else{
+        } else {
             myMap.UpdatePosition(now_ido, now_keido);
         }
 //        setContentView(R.layout.activity_sub);
@@ -436,17 +438,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
     /************************************************
-         物語
+     物語
      ************************************************/
     public void onGameStory(View v) {
         MyStory();
     }
+
     /************************************************
-        ゲームスタート
+     ゲームスタート
      ************************************************/
-    public void onGameScreen(View v){
+    public void onGameScreen(View v) {
         String message = "";
-        if (db_story == 0){
+        if (db_story == 0) {
             message += "\n「物語」を始めて下さい\n\n\n\n";
             CustomDialog.showCustomDialog(this, R.drawable.info, message, 0);
             return;
@@ -465,35 +468,36 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
  */
 
     }
+
     /************************************************
-        画面表示（サブ画面＝ドラゴンレーダー画面）
+     画面表示（サブ画面＝ドラゴンレーダー画面）
      ************************************************/
-    public void SubShow(){
+    public void SubShow() {
         ImageButton imgBtn = findViewById(R.id.btn_img_scoop);
         TextView txtstatus = findViewById(R.id.text_status);
         Button btn = findViewById(R.id.btn_start_end);
         if (this.mainTimer1 == null) {
             txtstatus.setText("「START」を押して 宝探し を始める");
             btn.setText("START");
-        }
-        else{
-            String tmp ="";
+        } else {
+            String tmp = "";
             if (myMap.isHitTreasure()) {
                 tmp += "\n「スコップ」ボタンで穴掘り開始\n";
             } else {
                 tmp += "\nお宝？の場所まで移動しよう・・・\n";
             }
             tmp += "\n赤：はじめの位置　青：いまの位置　" +
-                   "\n黄：お宝？の場所　緑：穴掘り開始　" +
-                   "";
+                    "\n黄：お宝？の場所　緑：穴掘り開始　" +
+                    "";
 
             txtstatus.setText(tmp);
             btn.setText("END");
             SubStamina();
         }
     }
+
     /************************************************
-        スタミナゲージ
+     スタミナゲージ
      ************************************************/
     public void SubStamina() {
         ProgressBar bar = findViewById(R.id.progress_stamina);
@@ -504,13 +508,26 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         TextView txt = findViewById(R.id.text_stamina);
         txt.setText("スタミナ残:" + db_stamina + "%");
     }
+
     /************************************************
-         スタート／エンド　ボタン
+       スタート／エンド　ボタン
      ************************************************/
+    public void GameEndDone(){
+        db_stamina -= 10;
+        if (db_stamina <= 0){
+            db_stamina = 0;
+        }
+        setContentView(R.layout.activity_sub);
+        gameClear();
+        SubShow();
+    }
     public void onSubStartEnd(View v) {
+        String message = "";
+        int id = 0;
+
         //スタート
         if (this.mainTimer1 == null) {
-            LinearLayout lay4 = (LinearLayout)findViewById(R.id.linearLayout4);
+            LinearLayout lay4 = (LinearLayout) findViewById(R.id.linearLayout4);
             myMap = new MyMap(this);
             myMap.setCallback(this);
             lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT));
@@ -528,20 +545,27 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
         //エンド
         else {
-            setContentView(R.layout.activity_sub);
-            gameClear();
+            id = R.drawable.info;
+            message +=
+                    "宝探しを終了して村へ帰りますか？\n"+
+                    "村へ帰ると勇者のスタミナが【10】減ります\n"+
+                    "\n終了する場合は「はい」を選択して下さい\n"+
+                    "（スタミナは【宿屋】で回復する事ができます）\n" +
+                    "\n\n";
+            CustomDialog.showCustomDialogYesNo(this, id, message, 2, 0);
         }
         SubShow();
     }
+
     /************************************************
-         宝探しゲーム　終了処理
+     宝探しゲーム　終了処理
      ************************************************/
     public void gameClear() {
         if (this.mainTimer1 != null) {
             this.mainTimer1.cancel();
             this.mainTimer1 = null;
         }
-        if (myMap != null){
+        if (myMap != null) {
             myMap = null;
         }
         ini_ido = 0.0f;         //今回の位置
@@ -551,22 +575,49 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         bak1_ido = 0.0f;        //前回の位置
         bak1_keido = 0.0f;      //前回の位置
     }
+
     /************************************************
-         サブ画面のメニュー　ボタン
+     サブ画面のメニュー　ボタン
      ************************************************/
     public void onSubMenu(View v) {
         gameClear();
         setContentView(R.layout.activity_main);
     }
     /************************************************
-        スコップ　ボタン（宝ザクザク）
+     スコップ　ボタン（宝ザクザク）
      ************************************************/
+    //スタミナ回復処理（報酬動画閲覧後）
+    public void StaminaRecovery(){
+        String message = "";
+        int id = 0;
+        id = R.drawable.s001;
+        message +=
+                "勇者のスタミナが【100】に回復しました\n\n"+
+                "\n"+
+                "\n\n\n";
+        CustomDialog.showCustomDialog(this, id, message, 0);
+        db_stamina = 100;
+    }
     public void onSubScoop(View v){
+        String message = "";
+        int id = 0;
+
         if (this.mainTimer1 == null) {
             return;
         }
-        String message = "";
-        int id = 0;
+        //スタミナ切れか？
+        if (db_stamina <= 0){
+            id = R.drawable.info;
+            message +=
+                    "スタミナ切れです\n"+
+                    "メニュー【宿屋】でスタミナを回復して下さい\n"+
+                    "\nもしくは・・・\n"+
+                    "【広告動画】の報酬でスタミナを回復できます\n" +
+                    "【広告動画】を閲覧しますか？\n\n";
+            CustomDialog.showCustomDialogYesNo(this, id, message, 1, 0);
+            return;
+        }
+        //穴掘りスタート
         if (myMap.isHitTreasure()){
             id = R.drawable.start;
             message +=
@@ -574,9 +625,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                     " ・・・お宝ザクザク・・・\n"+
                     "\n\n\n";
             CustomDialog.showCustomDialog(this, id, message, 1);
-//           ScoopResult();
         }
         else{
+
         }
 
     }
@@ -584,7 +635,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     public void ScoopResult(){
         int type = myMap.ZakuZakuResult();
         //スタミナ減少
-        db_stamina -= 10;
+        db_stamina -= 5;
         if (db_stamina < 0){
             db_stamina = 0;
         }
@@ -656,7 +707,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         message +=
                 "【福引き券ｘ1】を使用して\nお宝GETだぜ\n\n"+
                         " ・・・何が出るかなぁ？・・・\n"+
-                        "\n\n\n";
+                        "\n";
         CustomDialog.showCustomDialog(this, id, message, 12);
     }
     //結果
@@ -686,7 +737,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         message +=
                 "【スカウトベルｘ1】を使用して\n仲間GETだぜ\n\n"+
                         " ・・・だれが来るかなぁ？・・・\n"+
-                        "\n\n\n";
+                        "\n";
         CustomDialog.showCustomDialog(this, id, message, 22);
     }
     //結果
@@ -742,6 +793,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         if (db_story == 4){
             // 鬼退治
             if (count >=10){
+                story = 5;
                 db_story = 5;
             }
         }

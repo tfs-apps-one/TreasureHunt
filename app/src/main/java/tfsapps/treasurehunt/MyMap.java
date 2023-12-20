@@ -320,7 +320,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
                 if (type_2 < 10){
                     type = 11;
                 }
-                else if (type_2 >= 11 && type_2 <= 21){
+                else if (type_2 >= 11 && type_2 <= 25){
                     type = 12;
                 }
                 else{
@@ -330,13 +330,14 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         }
 
 /*test_make*/
+        /*
         if ( type_1 > 50 ){
             return 12;
         }
         else {
             return 13;
-        }
-//        return type;
+        }*/
+        return type;
     }
 
     // スタート位置
