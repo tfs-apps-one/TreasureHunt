@@ -29,6 +29,7 @@ public class CustomDialog {
         textView.setGravity(Gravity.CENTER);
         // ダイアログを表示
 //        builder.setPositiveButton("OK", null); // ボタンのリスナーを設定する場合はここに追加
+        builder.setCancelable(false); // ボタン以外での閉じるを無効化
         builder.setPositiveButton( "次へ" , new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -76,21 +77,38 @@ public class CustomDialog {
         TextView textView = view.findViewById(R.id.textView);
         textView.setText(message);
         textView.setTextSize(14);
-        textView.setGravity(Gravity.TOP | Gravity.LEFT);
+        textView.setGravity(Gravity.CENTER);
+//        textView.setGravity(Gravity.TOP | Gravity.LEFT);
         // ダイアログを表示
 //        builder.setPositiveButton("OK", null); // ボタンのリスナーを設定する場合はここに追加
+        builder.setCancelable(false); // ボタン以外での閉じるを無効化
         builder.setPositiveButton( "はい" , new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                if (YesStep == 1) {            //スコップ処理
+                if (YesStep == 1) {            //スコップ処理（スタミナ切れ）
                     if (context instanceof MainActivity) {
                         ((MainActivity) context).StaminaRecovery();
                     }
                 }
-                if (YesStep == 2) {            //スコップ処理
+                if (YesStep == 2) {            //スコップ処理（宝探し中断）
                     if (context instanceof MainActivity) {
                         ((MainActivity) context).GameEndDone();
+                    }
+                }
+                if (YesStep == 51) {            //宿屋に泊まる
+                    if (context instanceof MainActivity) {
+                        ((MainActivity) context).TownInnDone();
+                    }
+                }
+                if (YesStep == 52) {            //福引きする
+                    if (context instanceof MainActivity) {
+                        ((MainActivity) context).TownLotDone();
+                    }
+                }
+                if (YesStep == 53) {            //スカウトする
+                    if (context instanceof MainActivity) {
+                        ((MainActivity) context).TownScoutDone();
                     }
                 }
                 return;
@@ -135,6 +153,7 @@ public class CustomDialog {
 
         // ダイアログを表示
 //        builder.setPositiveButton("OK", null); // ボタンのリスナーを設定する場合はここに追加
+        builder.setCancelable(false); // ボタン以外での閉じるを無効化
         builder.setPositiveButton( "次へ" , new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

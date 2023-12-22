@@ -69,6 +69,10 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     long _refresh = 0;   //画面リフレッシュ　履歴表示クリア
     long _blink = 0;     //お宝ヒット中の表示
 
+//  test_make
+    final int TREASURE_MAX = 15;
+//    final int TREASURE_MAX = 1;
+
     /*
     static public double init_pos_ido = 0.0f;
     static public double init_pos_kei = 0.0f;
@@ -404,7 +408,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         double _ido;
         double _kei;
         int i = 0;
-        while ( i<15     ){
+        while ( i < TREASURE_MAX ){
             _x = rand.nextInt(YOKO * MASU ); //1000
             _y = rand.nextInt(TATE * MASU ); //1000
 
@@ -477,6 +481,19 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 /*test_make*/
+    /* 宝物を全て掘ってしまったのか？ */
+    public boolean isAllTreasureScoopDone(){
+        if (treasuresList.size() == 0){
+            nowTreasure = null;
+            return false;
+        }
+        for (int k=0; k < treasuresList.size(); k++) {
+                if (treasuresList.get(k).isAlive){
+                    return false;
+                }
+        }
+        return true;
+    }
 
     /* 宝物にヒットしているのか？ */
     public boolean isHitTreasure(){

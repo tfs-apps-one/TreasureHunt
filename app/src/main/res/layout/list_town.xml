@@ -24,12 +24,12 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/text_status"
+                android:id="@+id/text_town_status"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="4"
                 android:textStyle="bold"
-                android:gravity="center"
+                android:gravity="center|left"
                 android:text="お金、福引券、ベルの数を表示"
                 android:textColor="@color/white" />
 
@@ -44,6 +44,7 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="戻る"
+                android:onClick="onTownBack"
                 android:textColor="@color/white2"
                 android:textStyle="bold"
                 app:backgroundTint="@null"
@@ -104,7 +105,8 @@
                     android:layout_marginBottom="10dp"
                     android:layout_weight="4"
                     android:gravity="center|left"
-                    android:text="【宿屋】に泊まる"
+                    android:onClick="onListTownInn"
+                    android:text="【宿屋】に泊まる\n（スタミナを回復する）"
                     android:textColor="@color/white2"
                     android:textStyle="bold"
                     app:backgroundTint="@null"
@@ -144,7 +146,8 @@
                     android:layout_marginBottom="10dp"
                     android:layout_weight="4"
                     android:gravity="center|left"
-                    android:text="【福引き券】を使用する"
+                    android:text="【福引き券】を使用する\n（アイテムと交換する）"
+                    android:onClick="onListTownLot"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     app:backgroundTint="@null"
@@ -184,7 +187,8 @@
                     android:layout_marginBottom="10dp"
                     android:layout_weight="4"
                     android:gravity="center|left"
-                    android:text="【スカウトベル】を使用する"
+                    android:text="【スカウトベル】を使用する\n（仲間を集める）"
+                    android:onClick="onListTownScout"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     app:backgroundTint="@null"
@@ -224,7 +228,8 @@
                     android:layout_marginBottom="10dp"
                     android:layout_weight="4"
                     android:gravity="center|left"
-                    android:text="【村の宝箱】を開ける"
+                    android:text="【村の宝箱】を開ける\n（広告動画を観て報酬を貰う）"
+                    android:onClick="onListTownTreasure"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     app:backgroundTint="@null"
@@ -264,7 +269,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/img_scoop"
+                    android:id="@+id/img_town_scoop"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
@@ -277,7 +282,7 @@
                     android:gravity="center"/>
 
                 <Button
-                    android:id="@+id/btn_scoop"
+                    android:id="@+id/btn_town_scoop"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
@@ -286,7 +291,8 @@
                     android:layout_marginBottom="10dp"
                     android:layout_weight="4"
                     android:gravity="center|left"
-                    android:text="普通のスコップ"
+                    android:text="装備（手）：普通のスコップ"
+                    android:onClick="onListTownScoop"
                     android:textColor="@color/white2"
                     android:textStyle="bold"
                     app:backgroundTint="@null"
@@ -304,7 +310,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/img_scope"
+                    android:id="@+id/img_town_scope"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
@@ -317,7 +323,7 @@
                     android:gravity="center"/>
 
                 <Button
-                    android:id="@+id/btn_"
+                    android:id="@+id/btn_town_scope"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
@@ -326,7 +332,8 @@
                     android:layout_marginBottom="10dp"
                     android:layout_weight="4"
                     android:gravity="center|left"
-                    android:text="普通のメガネ"
+                    android:text="装備（頭）：普通のメガネ"
+                    android:onClick="onListTownScope"
                     android:textColor="@color/white"
                     android:textStyle="bold"
                     app:backgroundTint="@null"

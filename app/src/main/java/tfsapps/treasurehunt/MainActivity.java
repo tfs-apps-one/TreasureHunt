@@ -16,6 +16,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.content.pm.PackageManager;
@@ -55,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private MainTimerTask mainTimerTask1;        //タイマタスククラス
     private Handler mHandler = new Handler();   //UI Threadへのpost用ハンドラ
 
+    private Timer subDispTimer;                 //タイマー用
+    private SubDispTimerTask subDispTimerTask;  //タイマタスククラス
+    private Handler subHandler = new Handler(); //UI Threadへのpost用ハンドラ
+
     private final Random rand = new Random(System.currentTimeMillis());
 
     private double ini_ido = 0.0f;         //今回の位置
@@ -65,6 +71,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private double bak1_keido = 0.0f;      //前回の位置
 
     private LinearLayout lay4;
+
+    //音源
+    private AudioManager am;
+    private int start_volume;
+    private int ebgm_index = 1;
+    private MediaPlayer ebgm = null;
+    private int bgm_index = 1;
+    private MediaPlayer bgm = null;
 
     //  DB関連
     public MyOpenHelper helper;             //DBアクセス
@@ -193,8 +207,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private int db_data_100 = 0;             //DB
 
     private boolean get_GPS = false;
+    private int GPS_type = 0;
 
     private MyDialog myDialog;
+
+    private boolean list_town_refresh = false;  //村画面の強制リフレッシュ
 
     private final ActivityResultLauncher<String>
             requestPermissionLauncher = registerForActivityResult(
@@ -244,6 +261,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         /* データベース */
         helper = new MyOpenHelper(this);
         AppDBInitRoad();
+
+        /* サウンド */
+        SoundInit();
+        BgmStart(1);
 
         /*test_make*/
 
@@ -301,6 +322,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         super.onPause();
         //  DB更新
         AppDBUpdated();
+        //  サウンド
+        SoundStop();
     }
 
     @Override
@@ -308,6 +331,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         super.onStop();
         //  DB更新
         AppDBUpdated();
+        //  サウンド
+        SoundStop();
     }
 
     @Override
@@ -315,6 +340,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         super.onDestroy();
         //  DB更新
         AppDBUpdated();
+        //  サウンド
+        SoundStop();
     }
 
 
@@ -389,13 +416,44 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
                 5000, 7, this);
         */
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                5000, 5, this);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                7000, 10, this);
-        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
-                7000, 10, this);
+        switch (GPS_type) {
+            default:
+            case 0: //推奨？
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        5000, 5, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        10000, 10, this);
+                locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
+                        10000, 10, this);
+                break;
 
+            case 1: //感度：少し良い
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        3000, 3, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        5000, 5, this);
+                locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
+                        5000, 5, this);
+                break;
+
+            case 2: //感度：一番良い
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        1000, 1, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        3000, 3, this);
+                locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
+                        3000, 3, this);
+                break;
+            case 3: //一番、鈍感
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        10000, 10, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        10000, 10, this);
+                locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
+                        10000, 10, this);
+                break;
+
+        }
         get_GPS = true;
     }
 
@@ -426,11 +484,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 return;
             }
         }
-
+/*
         Toast toast = Toast.makeText(this,
-                "UPDATE！！\n" + "緯度：" + ido + "　経度：" + keido, Toast.LENGTH_SHORT);
+                "UPDATE="+GPS_type+"!!\n" + "緯度：" + ido + "　経度：" + keido, Toast.LENGTH_SHORT);
         toast.show();
-
+*/
         bak1_ido = now_ido;
         bak1_keido = now_keido;
         now_ido = location.getLatitude();
@@ -470,23 +528,32 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
      ************************************************/
     public void onGameScreen(View v) {
         String message = "";
+        int id = 0;
         if (db_story == 0) {
             message += "\n「物語」を始めて下さい\n\n\n\n";
-            CustomDialog.showCustomDialog(this, R.drawable.info, message, 0);
+            id = R.drawable.info;
+            CustomDialog.showCustomDialog(this, id, message, 0);
             return;
         }
+        else {
+            //サブ画面へ移動
+            setContentView(R.layout.activity_sub);
+            BgmStart(5);
+            SubShow();
 
-        //サブ画面へ移動
-        setContentView(R.layout.activity_sub);
-        SubShow();
-//        lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
+            id = R.drawable.notice;
+            message +=
+                    "【屋外】でのプレイを想定しています\n"+
+                    "（公園や広場などで遊んで下さい）\n\n\n"+
+                    "屋内や街中のプレイは想定していません\n" +
+                    "正しい現在位置が\n" +
+                    "取得できない場合があります\n\n"+
+                    "\n";
+            CustomDialog.showCustomDialog(this, id, message, 0);
 
+//          lay4.addView(myMap, new LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT));
 
-        /* スタートボタン押下後でよいのか？ */
-/*        if (myMap == null) {
-            myMap = findViewById(R.id.my_map);
         }
- */
 
     }
 
@@ -502,16 +569,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             txtstatus.setText("「START」を押して 宝探し を始める");
             btn.setText("START");
             SubPosition(0);
-        } else {
+        }
+        else {
             String tmp = "";
-            if (myMap.isHitTreasure()) {
-                tmp += "\n「スコップ」ボタンで穴掘り開始\n";
-            } else {
-                tmp += "\nお宝？の場所まで移動しよう・・・\n";
+            if (now_ido == 0.0f || now_keido == 0.0f){
+                tmp += "\n\n・・・現在、位置情報取得中・・・\n\n";
             }
-            tmp += "\n赤：はじめの位置　青：いまの位置　" +
-                    "\n黄：お宝？の場所　緑：穴掘り開始　" +
-                    "";
+            else {
+                if (myMap.isHitTreasure()) {
+                    tmp += "\n「スコップ」ボタンで穴掘り開始\n";
+                } else {
+                    tmp += "\nお宝？の場所まで移動しよう・・・\n";
+                }
+                tmp += "\n赤：はじめの位置　青：いまの位置　" +
+                        "\n黄：お宝？の場所　緑：穴掘り開始　" +
+                        "";
+            }
 
             txtstatus.setText(tmp);
             btn.setText("END");
@@ -553,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         bar.setProgress(db_stamina);
 
         TextView txt = findViewById(R.id.text_stamina);
-        txt.setText("スタミナ残:" + db_stamina + "%");
+        txt.setText("スタミナ \n残：" + db_stamina + "％");
     }
 
     /************************************************
@@ -621,18 +694,52 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         now_keido = 0.0f;       //今回の位置
         bak1_ido = 0.0f;        //前回の位置
         bak1_keido = 0.0f;      //前回の位置
+
+        AppDBUpdated();
     }
 
     /************************************************
         サブ画面のメニュー　ボタン
      ************************************************/
     public void onSubMenu(View v) {
+        String tmp = "";
+        int id = 0;
+        if (this.mainTimer1 != null) {
+            tmp +=  "「宝探し」を終了して下さい\n\n\n"+
+                    "全ての宝を掘ってみる\n"+
+                    "or \n"+
+                    "【END】で中断する\n";
+            id = R.drawable.info;
+            CustomDialog.showCustomDialog(this, id, tmp, 0);
+            return;
+        }
         gameClear();
         setContentView(R.layout.activity_main);
+        BgmStart(1);
     }
     /************************************************
         スコップ　ボタン（宝ザクザク）
      ************************************************/
+    //すべての宝を掘ったときの処理
+    public void ScoopAllDone() {
+        String message = "";
+        int id = 0;
+
+        if (ini_keido == 0.0f || ini_ido == 0.0f){
+            return;
+        }
+        if (myMap.isAllTreasureScoopDone() ) {
+            message +=
+                    "【穴掘り】完了\n\n" +
+                            "もう一度始める場合は\n" +
+                            "【START】を押してください\n\n\n";
+            CustomDialog.showCustomDialog(this, id, message, 0);
+
+            setContentView(R.layout.activity_sub);
+            gameClear();
+            SubShow();
+        }
+    }
     //スタミナ回復処理（報酬動画閲覧後）
     public void StaminaRecovery(){
         String message = "";
@@ -644,6 +751,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 "\n\n\n";
         CustomDialog.showCustomDialog(this, id, message, 0);
         db_stamina = 100;
+        EffectBgmStart(5);
     }
     public void onSubScoop(View v){
         String message = "";
@@ -672,11 +780,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                     " ・・・お宝ザクザク・・・\n"+
                     "\n\n\n";
             CustomDialog.showCustomDialog(this, id, message, 1);
+            EffectBgmStart(1);
         }
+        //全ての宝を掘った場合
         else{
-
+            ScoopAllDone();
         }
-
     }
     //結果
     public void ScoopResult(){
@@ -691,48 +800,59 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         int step = 0;
         switch (type) {
             case 1:
+                EffectBgmStart(3);
                 id = R.drawable.t01;
                 message += "神キター！！\n\n\nレア宝「王冠」を入手しました\n\n";
                 break;
             case 2:
+                EffectBgmStart(3);
                 id = R.drawable.t02;
                 message += "神キター！！\n\n\nレア宝「指輪」を入手しました\n\n";
                 break;
             case 3:
+                EffectBgmStart(3);
                 id = R.drawable.t03;
                 message += "神キター！！\n\n\nレア宝「絵画」を入手しました\n\n";
                 break;
             case 11:
+                EffectBgmStart(3);
                 id = R.drawable.t11;
                 message += "やったー！！\n\n\nお宝「コイン」を入手しました\n\n";
                 break;
             case 12:
+                EffectBgmStart(3);
                 step = 11;
                 id = R.drawable.t12;
                 message += "やったー！！\n\n\nお宝「福引き券」を入手しました\n\n";
                 break;
             case 13:
+                EffectBgmStart(3);
                 step = 21;
                 id = R.drawable.t13;
                 message += "やったー！！\n\n\nお宝「スカウトベル」を入手しました\n\n";
                 break;
             case 61:
+                EffectBgmStart(4);
                 id = R.drawable.t61;
                 message += "ざんねん\n\n\nガラクタ「やかん」を入手しました\n\n";
                 break;
             case 62:
+                EffectBgmStart(4);
                 id = R.drawable.t62;
                 message += "ざんねん\n\n\nガラクタ「かさ」を入手しました\n\n";
                 break;
             case 63:
+                EffectBgmStart(4);
                 id = R.drawable.t63;
                 message += "ざんねん\n\n\nガラクタ「なべ」を入手しました\n\n";
                 break;
             case 64:
+                EffectBgmStart(4);
                 id = R.drawable.t64;
                 message += "ざんねん\n\n\nガラクタ「新聞紙」を入手しました\n\n";
                 break;
             case 65:
+                EffectBgmStart(4);
                 id = R.drawable.t65;
                 message += "ざんねん\n\n\nガラクタ「乾電池」を入手しました\n\n";
                 break;
@@ -742,6 +862,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             //入手PLUS
             SetGameDbParam(type, 1);
         }
+        ScoopAllDone();
     }
 
     /************************************************
@@ -753,9 +874,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         id = R.drawable.t12;
         message +=
                 "【福引き券ｘ1】を使用して\nお宝GETだぜ\n\n"+
-                        " ・・・何が出るかなぁ？・・・\n"+
-                        "\n";
+                " ・・・何が出るかなぁ？・・・\n"+
+                "\n";
         CustomDialog.showCustomDialog(this, id, message, 12);
+        EffectBgmStart(2);
     }
     //結果
     public void LotResult() {
@@ -768,11 +890,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         name = GetGameDataName(index);
         message += "やったー！！\n\n\nお宝「" +name + "」を入手しました\n\n";
         CustomDialog.showCustomDialog(this, id, message, 0);
+        EffectBgmStart(3);
 
         //福引MINUS
         SetGameDbParam(12, -1);
         //入手PLUS
         SetGameDbParam(index, 1);
+
+        if (list_town_refresh){
+            list_town_refresh = false;
+            ListTownDisp();
+        }
     }
     /************************************************
         スカウトベル　を使用してアイテム入手
@@ -783,9 +911,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         id = R.drawable.t13;
         message +=
                 "【スカウトベルｘ1】を使用して\n仲間GETだぜ\n\n"+
-                        " ・・・だれが来るかなぁ？・・・\n"+
-                        "\n";
+                " ・・・だれが来るかなぁ？・・・\n"+
+                "\n";
         CustomDialog.showCustomDialog(this, id, message, 22);
+        EffectBgmStart(2);
     }
     //結果
     public void ScoutResult() {
@@ -798,11 +927,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         name = GetGameDataName(index);
         message += "やったー！！\n\n\n「" +name + "」が仲間に加わりました\n\n";
         CustomDialog.showCustomDialog(this, id, message, 0);
+        EffectBgmStart(3);
 
         //ベルMINUS
         SetGameDbParam(13, -1);
         //入手PLUS
         SetGameDbParam(index, 1);
+
+        if (list_town_refresh){
+            list_town_refresh = false;
+            ListTownDisp();
+        }
     }
 
 
@@ -848,6 +983,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         switch (story){
             /* 冒険の始まり */
             case 0:
+                BgmStart(2);
                 id = R.drawable.s002;    step = 1;   db_story++;
                 message +=
                         "王様：「勇者よ、そなたは今日で16才になった」\n" +
@@ -855,6 +991,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "王様：「村人のため【鬼退治】をお願いしたい」\n\n";
                 break;
             case 1:
+                BgmStart(2);
                 id = R.drawable.s001;    step = 1;   db_story++;
                 message +=
                         "勇者：「王様、私には無理です」\n" +
@@ -862,6 +999,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 2:
+                BgmStart(2);
                 id = R.drawable.s002;    step = 1;   db_story++;
                 message +=
                         "王様：「勇者よ、わかった」\n" +
@@ -870,6 +1008,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "王様：「そしてその宝で仲間を集めるのだ」\n\n";
                 break;
             case 3:
+                BgmStart(2);
                 id = R.drawable.s001;    step = 0;  db_story++;
                 message +=
                         "勇者：「王様、やっ・・・やってみます」\n" +
@@ -878,6 +1017,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 4:
+                BgmStart(2);
                 id = R.drawable.s001;    step = 0;
                 message +=
                         "勇者：「仲間は今のところ【"+count+"】だなぁ」\n" +
@@ -886,6 +1026,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 5:
+                BgmStart(2);
                 id = R.drawable.s001;    step = 1;  db_story++;
                 message +=
                         "勇者：「王様、仲間が【"+count+"】集まりました」\n" +
@@ -894,6 +1035,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 6:
+                BgmStart(2);
                 id = R.drawable.s002;    step = 1;  db_story++;
                 message +=
                         "王様：「勇者よ、強そうな仲間たちじゃ」\n" +
@@ -902,6 +1044,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 7:
+                BgmStart(2);
                 id = R.drawable.s001;    step = 1;  db_story++;
                 message +=
                         "勇者：「では行ってきます！！」\n" +
@@ -910,6 +1053,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 8:
+                BgmStart(3);
                 id = R.drawable.s003;    step = 1;  db_story++;
                 message +=
                         "赤鬼：「誰だー！！我を起こす者は？」\n" +
@@ -918,6 +1062,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 9:
+                BgmStart(3);
                 id = R.drawable.s001;    step = 1;  db_story++;
                 message +=
                         "勇者：「こっ恐い〜〜〜汗」\n" +
@@ -926,6 +1071,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 10:
+                BgmStart(3);
                 id = R.drawable.s001;    step = 1;  db_story++;
                 message +=
                         "・・・ドドドドォー！！・・・\n" +
@@ -934,6 +1080,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 11:
+                BgmStart(3);
                 id = R.drawable.s003;    step = 1;  db_story++;
                 message +=
                         "赤鬼：「ひぇー！！敵わない」\n" +
@@ -942,6 +1089,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 12:
+                BgmStart(3);
                 id = R.drawable.s001;    step = 1;  db_story++;
                 message +=
                         "勇者：「やったー！！鬼を退治できた」\n" +
@@ -950,6 +1098,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n";
                 break;
             case 13:
+                BgmStart(2);
                 id = R.drawable.s002;    step = 1;  db_story++;
                 message +=
                         "王様：「勇者とその仲間たち・・・」\n" +
@@ -958,6 +1107,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         "\n\n";
                 break;
             case 14:
+                BgmStart(2);
                 id = R.drawable.info;    step = 0;
                 message +=
                         "＊＊＊＊　おめでとう　＊＊＊＊\n\n" +
@@ -981,6 +1131,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     public void onShop(View v){
         //サブ画面へ移動
         setContentView(R.layout.list_item);
+        BgmStart(4);
         ListItemDisp();
     }
     /************************************************
@@ -989,6 +1140,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     public void onScout(View v){
         //サブ画面へ移動
         setContentView(R.layout.list_scout);
+        BgmStart(4);
         ListScoutDisp();
     }
     /************************************************
@@ -996,6 +1148,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
      ************************************************/
     public void onTown(View v){
         setContentView(R.layout.list_town);
+        BgmStart(4);
+        ListTownDisp();
+        /*
+        if (this.subDispTimer == null) {
+            this.subDispTimer = new Timer();
+            //タスククラスインスタンス生成
+            this.subDispTimerTask = new SubDispTimerTask();
+            //タイマースケジュール設定＆開始
+            this.subDispTimer.schedule(subDispTimerTask, 0, 10000);
+        }
+
+         */
     }
 
 
@@ -1014,6 +1178,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                         locationStart();
                     }
                     SubShow();
+                }
+            });
+        }
+    }
+    public class SubDispTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            //ここに定周期で実行したい処理を記述します
+            subHandler.post(new Runnable() {
+                public void run() {
+//                    ListTownDisp();
                 }
             });
         }
@@ -1182,10 +1357,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     }
     /************************************************
-        お宝  メニューボタン処理
+            メニューボタン処理
      ************************************************/
     public void onItemMenu(View v){
         setContentView(R.layout.activity_main);
+        BgmStart(1);
     }
 
 
@@ -1302,16 +1478,158 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         if (db_data_39 > 0){
             t1002.setText(GetGameDataName(39));    i1002.setImageResource(R.drawable.c39);
         }
-
-
     }
     /************************************************
          仲間（スカウト）メニューボタン処理
      ************************************************/
     public void onScoutMenu(View v){
         setContentView(R.layout.activity_main);
+        BgmStart(1);
     }
 
+    /************************************************
+        村（宿屋・福引き・仲間集め）表示処理
+     ************************************************/
+    public void ListTownDisp() {
+        TextView townstatus = findViewById(R.id.text_town_status);
+        Button btn_scoop = findViewById(R.id.btn_town_scoop);
+        Button btn_scope = findViewById(R.id.btn_town_scope);
+
+        String temp = "";
+        temp =  "　　コイン　："+db_data_11+"　　スタミナ　　："+db_stamina+"\n"+
+                "　　福引き券："+db_data_12+"　　スカウトベル："+db_data_13;
+
+        townstatus.setText(temp);
+    }
+    /************************************************
+        村（宿屋・福引き・仲間集め）表示処理
+     ************************************************/
+    public void onTownBack(View v) {
+        setContentView(R.layout.activity_main);
+        BgmStart(1);
+        AppDBUpdated();
+
+
+        if (this.subDispTimer != null) {
+            this.subDispTimer.cancel();
+            this.subDispTimer = null;
+        }
+    }
+
+    //宿屋に泊まる
+    public void TownInnDone(){
+        String message = "";
+        int id = 0;
+        if (db_data_11 <= 0){
+            id = R.drawable.home;
+            message +=
+                    "【コイン】が足りません！！\n\n\n\n\n";
+            CustomDialog.showCustomDialog(this, id, message, 0);
+        }
+        else {
+            id = R.drawable.s001;
+            message +=
+                    "勇者のスタミナが【満タン】になりました\n\n\n\n\n";
+            CustomDialog.showCustomDialog(this, id, message, 0);
+            EffectBgmStart(5);
+            SetGameDbParam(11, -1);
+            db_stamina = 100;
+
+        }
+        ListTownDisp();
+    }
+    public void onListTownInn(View v) {
+        String message = "";
+        int id = 0;
+        id = R.drawable.home;
+        message +=
+                "【コインｘ1】を\n使用して泊まりますか？\n\n\n\n";
+        CustomDialog.showCustomDialogYesNo(this, id, message, 51, 0);
+    //test_make
+        GPS_type = 0;
+    }
+
+    // 福引きする
+    public void TownLotDone(){
+        String message = "";
+        int id = 0;
+        if (db_data_12 <= 0){
+            id = R.drawable.t12;
+            message +=
+                    "【福引き券】が足りません！！\n\n\n\n\n";
+            CustomDialog.showCustomDialog(this, id, message, 0);
+        }
+        else {
+            LotDone();
+            list_town_refresh = true;   //画面更新
+        }
+        ListTownDisp();
+    }
+    public void onListTownLot(View v) {
+        String message = "";
+        int id = 0;
+        id = R.drawable.t12;
+        message +=
+                "【福引き券ｘ1】を\n使用してアイテムと交換しますか？\n\n\n\n";
+        CustomDialog.showCustomDialogYesNo(this, id, message, 52, 0);
+    }
+    //仲間をスカウトする
+    public void TownScoutDone(){
+        String message = "";
+        int id = 0;
+        if (db_data_13 <= 0){
+            id = R.drawable.t13;
+            message +=
+                    "【スカウトベル】が足りません！！\n\n\n\n\n";
+            CustomDialog.showCustomDialog(this, id, message, 0);
+        }
+        else {
+            ScoutDone();
+            list_town_refresh = true;   //画面更新
+        }
+        ListTownDisp();
+    }
+    public void onListTownScout(View v) {
+        String message = "";
+        int id = 0;
+        id = R.drawable.t13;
+        message +=
+                "【スカウトベルｘ1】を\n使用して仲間を集めますか？\n\n\n\n";
+        CustomDialog.showCustomDialogYesNo(this, id, message, 53, 0);
+    }
+    //村の宝を開ける
+    public void onListTownTreasure(View v) {
+        String message = "";
+        int id = 0;
+        id = R.drawable.info;
+        message +=
+                "【近日、アップデート予定です】\n\n\n\n\n";
+        CustomDialog.showCustomDialog(this, id, message, 0);
+    //test_make
+        GPS_type = 1;
+    }
+    //装備：スコップ
+    public void onListTownScoop(View v) {
+        String message = "";
+        int id = 0;
+        id = R.drawable.info;
+        message +=
+                "【近日、アップデート予定です】\n\n\n\n\n";
+        CustomDialog.showCustomDialog(this, id, message, 0);
+    //test_make
+        GPS_type = 2;
+    }
+    //装備：メガネ
+    public void onListTownScope(View v) {
+        String message = "";
+        int id = 0;
+        id = R.drawable.info;
+        message +=
+                "【近日、アップデート予定です】\n\n\n\n\n";
+        CustomDialog.showCustomDialog(this, id, message, 0);
+    //test_make
+        GPS_type = 3;
+    }
 
     /************************************************
          ゲームのアイテム、キャラクターの名前取得
@@ -1944,16 +2262,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             db_stamina = 100;
             db_story = 0;
 
+            /*
             if (ret == -1) {
                 Toast.makeText(this, "DataBase Create.... ERROR", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "DataBase Create.... OK", Toast.LENGTH_SHORT).show();
             }
+             */
 
         } else {
-
-            Toast.makeText(this, "Data Loading...  story:" + db_story, Toast.LENGTH_SHORT).show();
-
+            Toast.makeText(this, "ロード中・・・", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -2095,9 +2413,138 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
 
         if (ret == -1) {
-            Toast.makeText(this, "Saving.... ERROR ", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Saving.... ERROR ", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Saving.... OK "+ "op=0:"+db_isopen+" story=:"+db_story+" data=61:"+db_data_61, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Saving.... OK "+ "op=0:"+db_isopen+" story=:"+db_story+" data=61:"+db_data_61, Toast.LENGTH_SHORT).show();
+              Toast.makeText(this, "セーブ中・・・", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    /*************************************
+        サウンド処理
+     ************************************/
+    public void SoundInit(){
+
+        if (am == null) {
+            am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            start_volume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        }
+
+        if (bgm == null){
+            bgm = (MediaPlayer) MediaPlayer.create(this, R.raw.menu_01);
+        }
+        if (ebgm == null){
+            ebgm = (MediaPlayer) MediaPlayer.create(this, R.raw.e_scoop_01);
+        }
+    }
+    public void SoundStop() {
+
+        if (bgm != null){
+            bgm.stop();     bgm.release();      bgm = null;
+        }
+        if (ebgm != null){
+            ebgm.stop();    ebgm.release();     ebgm = null;
+        }
+    }
+    /***************************************************
+     音源処理
+     ****************************************************/
+    public void BgmStart(int index){
+
+        if (bgm == null){
+            return;
+        }
+        else{
+            if (bgm_index != index) {
+                bgm.stop();
+                bgm.release();
+                bgm = null;
+            }
+        }
+        bgm_index = index;
+
+        switch (index){
+            default:
+            case 1:
+                if (bgm == null){
+                    bgm = (MediaPlayer) MediaPlayer.create(this, R.raw.menu_01);
+                }
+                break;
+            case 2:
+                if (bgm == null){
+                    bgm = (MediaPlayer) MediaPlayer.create(this, R.raw.king_01);
+                }
+                break;
+            case 3:
+                if (bgm == null){
+                    bgm = (MediaPlayer) MediaPlayer.create(this, R.raw.boss_01);
+                }
+                break;
+            case 4:
+                if (bgm == null){
+                    bgm = (MediaPlayer) MediaPlayer.create(this, R.raw.town_01);
+                }
+                break;
+            case 5:
+                if (bgm == null){
+                    bgm = (MediaPlayer) MediaPlayer.create(this, R.raw.game_01);
+                }
+                break;
+        }
+
+        if (bgm.isPlaying() == false) {
+            bgm.setLooping(true);
+            bgm.start();
+        }
+
+    }
+    /***************************************************
+     エフェクト音源処理
+     ****************************************************/
+    public void EffectBgmStart(int index){
+
+        if (ebgm == null){
+            return;
+        }
+        else{
+            ebgm.stop();
+            ebgm.release();
+            ebgm = null;
+        }
+        ebgm_index = index;
+
+        switch (index){
+            default:
+            case 1:
+                if (ebgm == null){
+                    ebgm = (MediaPlayer) MediaPlayer.create(this, R.raw.e_scoop_01);
+                }
+                break;
+            case 2:
+                if (ebgm == null){
+                    ebgm = (MediaPlayer) MediaPlayer.create(this, R.raw.e_kuji_01);
+                }
+                break;
+            case 3:
+                if (ebgm == null){
+                    ebgm = (MediaPlayer) MediaPlayer.create(this, R.raw.e_ok_01);
+                }
+                break;
+            case 4:
+                if (ebgm == null){
+                    ebgm = (MediaPlayer) MediaPlayer.create(this, R.raw.e_ng_01);
+                }
+                break;
+            case 5:
+                if (ebgm == null){
+                    ebgm = (MediaPlayer) MediaPlayer.create(this, R.raw.e_stamina_01);
+                }
+                break;
+        }
+
+        if (ebgm.isPlaying() == false) {
+            ebgm.start();
         }
 
     }
