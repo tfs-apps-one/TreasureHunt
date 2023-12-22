@@ -58,6 +58,11 @@ public class CustomDialog {
                         ((MainActivity) context).ScoutResult();
                     }
                 }
+                if (step == 99) {            //GPS_精度悪し
+                    if (context instanceof MainActivity) {
+                        ((MainActivity) context).GameEndDone(1);
+                    }
+                }
                 return;
             }
         });
@@ -93,7 +98,7 @@ public class CustomDialog {
                 }
                 if (YesStep == 2) {            //スコップ処理（宝探し中断）
                     if (context instanceof MainActivity) {
-                        ((MainActivity) context).GameEndDone();
+                        ((MainActivity) context).GameEndDone(0);
                     }
                 }
                 if (YesStep == 51) {            //宿屋に泊まる

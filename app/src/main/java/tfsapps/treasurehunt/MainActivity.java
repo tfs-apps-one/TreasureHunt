@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     private boolean get_GPS = false;
     private int GPS_type = 0;
-
+    private int GPS_poor_accuracy_count;    //GPS精度が悪い回数
     private MyDialog myDialog;
 
     private boolean list_town_refresh = false;  //村画面の強制リフレッシュ
@@ -373,13 +373,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             Log.d("debug", "checkSelfPermission false");
             return;
         }
-
-        /*
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                5000, 5, this);
-
-        */
-
         /*
             GPS_PROVIDER	    GPSを利用した比較的精度の高い位置情報を使う
             NETWORK_PROVIDER    ネットワークを利用した位置情報を使う
@@ -400,22 +393,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                     1000, 3, this);
         }
          */
-        /*
-        //  屋外はGPS_PEOVIDER
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                3000, 5, this);
-         */
-        //  屋外はGPS_PEOVIDER
-
-        /* 以下は更新が激しい　2023.12.20 */
-        /*
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 3000, 3, this);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                 5000, 5, this);
         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
-                5000, 7, this);
-        */
+                5000, 5, this);
+
+        /*
         switch (GPS_type) {
             default:
             case 0: //推奨？
@@ -454,6 +439,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 break;
 
         }
+         */
         get_GPS = true;
     }
 
@@ -462,6 +448,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
         double ido = 0.0f;
         double keido = 0.0f;
+        String tmp = "";
+        int id = 0;
+
 
         if (this.mainTimer1 == null) {
             return;
@@ -481,9 +470,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             if (myMap.UpdatePositionOK(bak1_ido, bak1_keido, ido, keido) == false) {
                 /* 前回からの移動が多く見送り */
                 SubPosition(2);
+                GPS_poor_accuracy_count++;
+                //PGSの精度が連続して15回正しく取れていない場合は再スタートを促す
+                if (GPS_poor_accuracy_count > 10){
+                    id = R.drawable.notice;
+                    tmp +=
+                            "【現在位置】の取得が正しくできません\n\n"+
+                            "（屋外の広い場所で遊んで下さい）\n\n"+
+                            "宝探しは一度終了します\n" +
+                            "入手したアイテムは保存されます\n" +
+                            "スタミナを消費せずに再開可能です\n\n";
+
+                    CustomDialog.showCustomDialog(this, id, tmp, 99);
+                }
                 return;
             }
         }
+        GPS_poor_accuracy_count = 0;
 /*
         Toast toast = Toast.makeText(this,
                 "UPDATE="+GPS_type+"!!\n" + "緯度：" + ido + "　経度：" + keido, Toast.LENGTH_SHORT);
@@ -632,10 +635,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     /************************************************
         スタート／エンド　ボタン
      ************************************************/
-    public void GameEndDone(){
-        db_stamina -= 10;
-        if (db_stamina <= 0){
-            db_stamina = 0;
+    public void GameEndDone(int type){
+        if (type == 0) {
+            db_stamina -= 10;
+            if (db_stamina <= 0) {
+                db_stamina = 0;
+            }
         }
         setContentView(R.layout.activity_sub);
         gameClear();

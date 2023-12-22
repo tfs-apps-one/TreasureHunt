@@ -175,7 +175,8 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         //レーダー範囲
-        rader = 200;
+//        rader = 200;
+        rader = 150;
 //      rader = (Max_X / MASU);   // 100m ÷　MASU（1080dot の時　MASU=21）
 
         //自身の位置(現在の位置)
@@ -228,7 +229,8 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         float xc2;
         float yc2;
 
-        float range = 200;
+//        float range = 200;
+        float range = 150;
 
         //宝物を表示
         if (init_pos_ido == 0.0f || init_pos_kei == 0.0f){
@@ -299,7 +301,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         int type = 0;
         type_1 = rand.nextInt(100);
 
-        //41~99  60%は「ガラクタ」
+        //40~99  40%は「ガラクタ」
         if (type_1 > 40){
             type_2 = rand.nextInt(5);
             switch (type_2){
@@ -312,6 +314,28 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         }
         //0~40   40%は「宝」
         else{
+            type_2 = rand.nextInt(40);
+            if (type_2 == 1){
+                type = 1;   //王冠
+            }
+            else if (type_2 == 2){
+                type = 2;
+            }
+            else if (type_2 == 3){
+                type = 3;
+            }
+            else{
+                if (20 <= type_2 && type_2 <= 29){
+                    type = 12;
+                }
+                else if (30 <= type_2 && type_2 <= 39){
+                    type = 13;
+                }
+                else {
+                    type = 11;
+                }
+            }
+            /*
             if (type_1 == 1){
                 type = 1;
             }
@@ -333,6 +357,8 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
                     type = 13;
                 }
             }
+
+             */
         }
 
 /*test_make*/
