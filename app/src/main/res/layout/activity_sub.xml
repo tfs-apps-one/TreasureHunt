@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="70dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent">
 
@@ -49,12 +49,12 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="5dp"
                 android:layout_marginBottom="5dp"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 app:backgroundTint="@null"
                 android:background="@drawable/bak_1"
                 android:textColor="@color/white"
                 android:gravity="center"
-                android:text="hello world"
+                android:text=""
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -65,7 +65,7 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_tips"
+                    android:id="@+id/btn_start_end"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
@@ -75,7 +75,8 @@
                     android:layout_weight="1"
                     app:backgroundTint="@null"
                     android:background="@drawable/bak_1"
-                    android:text="-START-"
+                    android:onClick="onSubStartEnd"
+                    android:text="START"
                     android:textColor="@color/white"
                     android:textSize="20dp"
                     android:textStyle="bold"
@@ -90,6 +91,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="5dp"
                     android:layout_weight="1"
+                    android:onClick="onSubScoop"
                     app:backgroundTint="@null"
                     android:background="@drawable/bak_1"
                     android:src="@drawable/start"
@@ -102,44 +104,101 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                app:backgroundTint="@null"
-                android:background="@drawable/bak_1"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent">
 
-                <TextView
-                    android:id="@+id/text_result3"
+                <ImageView
+                    android:id="@+id/img_position"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="5dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_weight="1"
-                    android:gravity="center|right"
-                    android:text="スタミナ：８６％"
-                    android:textColor="@color/white" />
-
-                <ProgressBar
-                    android:id="@+id/progress3"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginBottom="0dp"
                     android:layout_weight="1"
-                    android:max="100"
-                    android:progress="86"
-                    android:progressBackgroundTint="@color/white" />
+                    app:backgroundTint="@null"
+                    android:background="@color/white2"
+                    android:gravity="center"
+                    android:src="@drawable/pos_0"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+
+                <LinearLayout
+                    android:id="@+id/linearLayout53"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    app:backgroundTint="@null"
+                    android:background="@drawable/bak_1"
+                    android:orientation="horizontal"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+
+                    <TextView
+                        android:id="@+id/text_stamina"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="2"
+                        android:gravity="center|right"
+                        android:text="スタミナ \n残：---％"
+                        android:textColor="@color/white" />
+
+                    <ProgressBar
+                        android:id="@+id/progress_stamina"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_weight="3"
+                        android:max="100"
+                        android:progress="0"
+                        android:progressBackgroundTint="@color/white" />
+                    </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_menu_1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginBottom="0dp"
+                    android:layout_weight="2"
+                    app:backgroundTint="@null"
+                    android:background="@drawable/bak_1"
+                    android:onClick="onSubMenu"
+                    android:text="戻る"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
             </LinearLayout>
 
+        </LinearLayout>
+
+        <!--
+        <LinearLayout
+            android:id="@+id/text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+        </LinearLayout>
+        -->
     </LinearLayout>
 
 
-    </LinearLayout>
 
     <!--
     <TextView

@@ -40,6 +40,8 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     final double KEIDO_1M = 0.000010966382364;
     final double IDO_20M = (0.000008983148616 * 20.0f);
     final double KEIDO_20M = (0.000010966382364 * 20.0f);
+    final double IDO_15M = (0.000008983148616 * 15.0f);
+    final double KEIDO_15M = (0.000010966382364 * 15.0f);
 
     final double IDO_100M = (0.000008983148616 * 100.0f);
     final double KEIDO_100M = (0.000010966382364 * 100.0f);
@@ -53,6 +55,25 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     final double IDO_1000M = (0.000008983148616 * 1000.0f);
     final double KEIDO_1000M = (0.000010966382364 * 1000.0f);
 
+    public double init_pos_ido = 0.0f;
+    public double init_pos_kei = 0.0f;
+    private double ido_1 = 0.0f;
+    private double ido_2 = 0.0f;
+    private double kei_1 = 0.0f;
+    private double kei_2 = 0.0f;
+    private double now_ido = 0.0f;
+    private double now_kei = 0.0f;
+    private double bak_ido = 0.0f;
+    private double bak_kei = 0.0f;
+
+    long _refresh = 0;   //画面リフレッシュ　履歴表示クリア
+    long _blink = 0;     //お宝ヒット中の表示
+
+//  test_make
+    final int TREASURE_MAX = 15;
+//    final int TREASURE_MAX = 1;
+
+    /*
     static public double init_pos_ido = 0.0f;
     static public double init_pos_kei = 0.0f;
     static private double ido_1 = 0.0f;
@@ -65,9 +86,11 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     static private double bak_ido = 0.0f;
     static private double bak_kei = 0.0f;
 
-    static long _refresh = 0;
-
+    static long _refresh = 0;   //画面リフレッシュ　履歴表示クリア
+    static long _blink = 0;     //お宝ヒット中の表示
+    */
     private final List<Treasure> treasuresList = new ArrayList<Treasure>();
+    public Treasure nowTreasure;
 
 
     //        public MyMap(Context context) {
@@ -88,7 +111,19 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         int rader = 0; //レーダーの範囲
 
         // ペイントする色の設定
-        paint.setColor(Color.argb(255, 100, 255, 100));
+        if (this.isHitTreasure() ){
+            _blink++;
+            if (_blink < 50 ){
+                paint.setColor(Color.argb(255, 100, 255, 100));
+            }
+            else{
+                paint.setColor(Color.argb(255, 200, 245, 245));
+            }
+            if (_blink > 100)   _blink = 0;
+        }
+        else {
+            paint.setColor(Color.argb(255, 100, 255, 100));
+        }
         // ペイントストロークの太さを設定
         paint.setStrokeWidth(WIDTH);
         // Styleのストロークを設定する
@@ -140,7 +175,8 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         //レーダー範囲
-        rader = 200;
+//        rader = 200;
+        rader = 150;
 //      rader = (Max_X / MASU);   // 100m ÷　MASU（1080dot の時　MASU=21）
 
         //自身の位置(現在の位置)
@@ -193,7 +229,8 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         float xc2;
         float yc2;
 
-        float range = 200;
+//        float range = 200;
+        float range = 150;
 
         //宝物を表示
         if (init_pos_ido == 0.0f || init_pos_kei == 0.0f){
@@ -201,6 +238,11 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         }
         else {
             for (int k=0; k < treasuresList.size(); k++) {
+
+                //ザクザクしたものは表示しない
+                if (treasuresList.get(k).isAlive == false) {
+                    continue;
+                }
 
                 //自身の位置(初期値)
                 paint.setColor(Color.argb(255, 255, 255, 125));
@@ -232,6 +274,102 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         }
 
 
+    }
+
+    /***************************************************
+        お宝確率
+        40% お宝　直値で下記は激レア
+            01:王冠　　激レア
+            02:指輪　　激レア
+            03:絵画　　激レア
+
+        　4〜40の間は、以下のパターン
+            11:コイン  〜11
+            12:ふくびき券
+            13:スカウトベル
+
+        60% ガラクタ　以下の５パターン
+            61:やかん
+            62:かさ
+            63:なべ
+            64:新聞紙
+            65:乾電池
+    ****************************************************/
+    public int TreasureSelect() {
+        int type_1 = 0;
+        int type_2 = 0;
+        int type = 0;
+        type_1 = rand.nextInt(100);
+
+        //40~99  40%は「ガラクタ」
+        if (type_1 > 40){
+            type_2 = rand.nextInt(5);
+            switch (type_2){
+                case 0: type = 61; break;
+                case 1: type = 62; break;
+                case 2: type = 63; break;
+                case 3: type = 64; break;
+                case 4: type = 65; break;
+            }
+        }
+        //0~40   40%は「宝」
+        else{
+            type_2 = rand.nextInt(40);
+            if (type_2 == 1){
+                type = 1;   //王冠
+            }
+            else if (type_2 == 2){
+                type = 2;
+            }
+            else if (type_2 == 3){
+                type = 3;
+            }
+            else{
+                if (20 <= type_2 && type_2 <= 29){
+                    type = 12;
+                }
+                else if (30 <= type_2 && type_2 <= 39){
+                    type = 13;
+                }
+                else {
+                    type = 11;
+                }
+            }
+            /*
+            if (type_1 == 1){
+                type = 1;
+            }
+            else if (type_1 == 2){
+                type = 2;
+            }
+            else if (type_1 == 3){
+                type = 3;
+            }
+            else {
+                type_2 = rand.nextInt(40);
+                if (type_2 < 10){
+                    type = 11;
+                }
+                else if (type_2 >= 11 && type_2 <= 25){
+                    type = 12;
+                }
+                else{
+                    type = 13;
+                }
+            }
+
+             */
+        }
+
+/*test_make*/
+        /*
+        if ( type_1 > 50 ){
+            return 12;
+        }
+        else {
+            return 13;
+        }*/
+        return type;
     }
 
     // スタート位置
@@ -296,7 +434,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         double _ido;
         double _kei;
         int i = 0;
-        while ( i<15     ){
+        while ( i < TREASURE_MAX ){
             _x = rand.nextInt(YOKO * MASU ); //1000
             _y = rand.nextInt(TATE * MASU ); //1000
 
@@ -309,7 +447,7 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
                 continue;
             }*/
 
-            _type  = rand.nextInt(4);    // レア宝、宝、ガラクタ、ガラクタ
+            _type  = TreasureSelect();
             _x_pm = rand.nextInt(2);
             _y_pm = rand.nextInt(2);
 //            _x += 50;
@@ -338,6 +476,20 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
 
     }
 
+    //　更新位置のチェック　15m以上の移動があった場合は更新を見送る
+    public boolean UpdatePositionOK(double n_ido, double n_kei, double t_ido, double t_kei){
+
+        /* 緯度の移動が適切か？ */
+        if (t_ido < (n_ido - IDO_15M) || (n_ido + IDO_15M) < t_ido){
+            return false;
+        }
+        /* 経度の移動が適切か？ */
+        if (t_kei < (n_kei - KEIDO_15M) || (n_kei + KEIDO_15M) < t_kei){
+            return false;
+        }
+        return true;
+    }
+
     // スタート位置
     public void UpdatePosition(double t_ido, double t_kei){
         double x, y, tmp, tmp2;
@@ -355,22 +507,63 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 /*test_make*/
+    /* 宝物を全て掘ってしまったのか？ */
+    public boolean isAllTreasureScoopDone(){
+        if (treasuresList.size() == 0){
+            nowTreasure = null;
+            return false;
+        }
+        for (int k=0; k < treasuresList.size(); k++) {
+                if (treasuresList.get(k).isAlive){
+                    return false;
+                }
+        }
+        return true;
+    }
 
     /* 宝物にヒットしているのか？ */
     public boolean isHitTreasure(){
         if (treasuresList.size() == 0){
+            nowTreasure = null;
             return false;
         }
         for (int k=0; k < treasuresList.size(); k++) {
             if (treasuresList.get(k).isHit == true) {
+                if (treasuresList.get(k).isAlive == false){
+                    continue;
+                }
+                nowTreasure = treasuresList.get(k);
                 return true;
             }
         }
+        nowTreasure = null;
         return false;
+    }
+    /* 宝物ザクザクの結果 */
+    public int ZakuZakuResult(){
+        int ret = -99;
+        if (nowTreasure != null){
+            ret = nowTreasure.t_type;
+
+            //結果が出たので削除する
+            for (int k=0; k < treasuresList.size(); k++) {
+                if (treasuresList.get(k).isAlive == false){
+                    continue;
+                }
+                if (nowTreasure.t_kei == treasuresList.get(k).t_kei &&
+                        nowTreasure.t_ido == treasuresList.get(k).t_ido
+                    ){
+                    nowTreasure = null;
+                    treasuresList.get(k).isAlive = false;
+                    break;
+                }
+            }
+        }
+        return ret;
     }
 
     /********************************************************************************
-     ゲーム全体の描画間隔
+         ゲーム全体の描画間隔
      *********************************************************************************/
     private class DrawThread extends Thread {
         private boolean isFinished;
