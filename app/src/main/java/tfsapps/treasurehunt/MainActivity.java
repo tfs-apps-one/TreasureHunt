@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         BgmStart(1);
 
         /*test_make*/
-
+/*
         db_data_1 = 1;
         db_data_2 = 1;
         db_data_3 = 1;
@@ -309,6 +309,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         db_data_77 = 1;
         db_data_78 = 1;
         db_data_79 = 1;
+
+ */
     }
 
     @Override
@@ -393,6 +395,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                     1000, 3, this);
         }
          */
+/*test_make*/
+
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 3000, 3, this);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
