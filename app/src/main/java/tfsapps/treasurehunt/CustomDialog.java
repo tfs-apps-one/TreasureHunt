@@ -93,7 +93,7 @@ public class CustomDialog {
 
                 if (YesStep == 1) {            //スコップ処理（スタミナ切れ）
                     if (context instanceof MainActivity) {
-                        ((MainActivity) context).StaminaRecovery();
+                        ((MainActivity) context).RdShow(0);
                     }
                 }
                 if (YesStep == 2) {            //スコップ処理（宝探し中断）
@@ -114,6 +114,11 @@ public class CustomDialog {
                 if (YesStep == 53) {            //スカウトする
                     if (context instanceof MainActivity) {
                         ((MainActivity) context).TownScoutDone();
+                    }
+                }
+                if (YesStep == 54) {            //宝箱を開ける
+                    if (context instanceof MainActivity) {
+                        ((MainActivity) context).RdShow(1);
                     }
                 }
                 return;
