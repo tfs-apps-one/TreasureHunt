@@ -4,12 +4,14 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -37,6 +39,16 @@ import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 import android.Manifest;
+
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.OnUserEarnedRewardListener;
+import com.google.android.gms.ads.rewarded.RewardItem;
+import com.google.android.gms.ads.rewarded.RewardedAd;
+import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
 import org.w3c.dom.Text;
 
@@ -208,10 +220,28 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     private boolean get_GPS = false;
     private int GPS_type = 0;
-    private int GPS_poor_accuracy_count;    //GPS精度が悪い回数
+    private int GPS_poor_accuracy_count;        //GPS精度が悪い回数
     private MyDialog myDialog;
 
     private boolean list_town_refresh = false;  //村画面の強制リフレッシュ
+
+    //バナー広告表示関連
+    private AdView mAdview;
+    private LinearLayout admobLayout;
+    private boolean visibleAd = false;
+    //本番ID
+    private String adUnitID = "ca-app-pub-4924620089567925/7206654134";
+    //テストID　
+//    private String adUnitID = "ca-app-pub-3940256099942544/6300978111";
+
+    // リワード広告
+    public LoadAdError adError;
+    public RewardedAd rewardedAd = null;
+    // 本番ID
+    private String AD_UNIT_ID = "ca-app-pub-4924620089567925/8519735807";
+    //テストID
+//    private String AD_UNIT_ID = "ca-app-pub-3940256099942544/5224354917";
+
 
     private final ActivityResultLauncher<String>
             requestPermissionLauncher = registerForActivityResult(
@@ -231,6 +261,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //動画リワード
+        loadRewardedAd();
+
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -238,16 +271,91 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             requestPermissionLauncher.launch(
                     Manifest.permission.ACCESS_FINE_LOCATION);
         } else {
-/*
-            //タイマーインスタンス生成
-            this.mainTimer1 = new Timer();
-            //タスククラスインスタンス生成
-            this.mainTimerTask1 = new MainTimerTask();
-            //タイマースケジュール設定＆開始
-            this.mainTimer1.schedule(mainTimerTask1, 5000, 10000);
 
- */
-//            locationStart();
+        }
+
+    }
+
+    /************************
+        リワード広告処理
+     *************************/
+    private void loadRewardedAd() {
+        RewardedAd.load(this,
+                AD_UNIT_ID,
+                new AdRequest.Builder().build(),
+                new RewardedAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(RewardedAd Ad) {
+                        rewardedAd = Ad;
+                        Context context = getApplicationContext();
+                        Toast.makeText(context, "報酬動画準備OK !!", Toast.LENGTH_SHORT).show();
+//                        Log.d("TAG", "The rewarded ad loaded.");
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(LoadAdError adError) {
+//                        Log.d("TAG", "The rewarded ad wasn't loaded yet.");
+                    }
+                });
+
+    }
+    /*
+        type 0: スタミナ100回復
+        type 1: 村の宝箱
+     */
+    public void RdShow(int type){
+        if (rewardedAd != null) {
+            Activity activityContext = MainActivity.this;
+            rewardedAd.show(activityContext, new OnUserEarnedRewardListener() {
+                @Override
+                public void onUserEarnedReward(@NonNull RewardItem rewardItem) {
+                    // Handle the reward.
+                    int rewardAmount = rewardItem.getAmount();
+                    String rewardType = rewardItem.getType();
+                    RdPresent(type);
+                }
+            });
+        } else {
+//            Log.d("TAG", "The rewarded ad wasn't ready yet.");
+        }
+    }
+    public void RdPresent(int type) {
+        //スタミナ回復
+        if (type == 0){
+            StaminaRecovery();
+            AppDBUpdated();
+        }
+        //村の宝箱
+        else {
+            MyMap _tmp = new MyMap(this);
+            ScoopResultDone( _tmp.TreasureSelect() );
+        }
+        loadRewardedAd();
+    }
+
+    /************************
+        バナー広告処理
+    *************************/
+    public void AdViewActive(boolean flag){
+
+        if (flag != visibleAd){
+            visibleAd = flag;
+        }
+        else{
+            return;
+        }
+        if (visibleAd){
+            MobileAds.initialize(this);
+            mAdview = new AdView(this);
+            mAdview.setAdUnitId(adUnitID);
+            mAdview.setAdSize(AdSize.BANNER);
+            admobLayout = findViewById(R.id.adView);
+            admobLayout.addView(mAdview);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdview.loadAd(adRequest);
+        } else {
+            mAdview.destroy();
+            mAdview = null;
         }
     }
 
@@ -476,7 +584,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 SubPosition(2);
                 GPS_poor_accuracy_count++;
                 //PGSの精度が連続して15回正しく取れていない場合は再スタートを促す
-                if (GPS_poor_accuracy_count > 10){
+                if (GPS_poor_accuracy_count == 10){
                     id = R.drawable.notice;
                     tmp +=
                             "【現在位置】の取得が正しくできません\n\n"+
@@ -545,6 +653,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         else {
             //サブ画面へ移動
             setContentView(R.layout.activity_sub);
+
+            //test_make
+            //広告表示スタート
+            AdViewActive(true);
+
             BgmStart(5);
             SubShow();
 
@@ -646,8 +759,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 db_stamina = 0;
             }
         }
-        setContentView(R.layout.activity_sub);
         gameClear();
+        setContentView(R.layout.activity_sub);
+        AdViewActive(true);
         SubShow();
     }
     public void onSubStartEnd(View v) {
@@ -704,6 +818,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         bak1_ido = 0.0f;        //前回の位置
         bak1_keido = 0.0f;      //前回の位置
 
+        AdViewActive(false);
         AppDBUpdated();
     }
 
@@ -744,8 +859,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                             "【START】を押してください\n\n\n";
             CustomDialog.showCustomDialog(this, id, message, 0);
 
-            setContentView(R.layout.activity_sub);
             gameClear();
+
+            setContentView(R.layout.activity_sub);
+            AdViewActive(true);
             SubShow();
         }
     }
@@ -797,13 +914,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
     }
     //結果
-    public void ScoopResult(){
-        int type = myMap.ZakuZakuResult();
-        //スタミナ減少
-        db_stamina -= 5;
-        if (db_stamina < 0){
-            db_stamina = 0;
-        }
+    public void ScoopResultDone(int type){
         String message = "";
         int id = 0;
         int step = 0;
@@ -871,9 +982,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             //入手PLUS
             SetGameDbParam(type, 1);
         }
+    }
+    public void ScoopResult(){
+        int type = myMap.ZakuZakuResult();
+        //スタミナ減少
+        db_stamina -= 5;
+        if (db_stamina < 0){
+            db_stamina = 0;
+        }
+        ScoopResultDone(type);
         ScoopAllDone();
     }
-
     /************************************************
          福引き券　を使用してアイテム入手
      ************************************************/
@@ -1607,13 +1726,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         CustomDialog.showCustomDialogYesNo(this, id, message, 53, 0);
     }
     //村の宝を開ける
+    public void TownTreasureDone(){
+        RdShow(1);
+    }
     public void onListTownTreasure(View v) {
         String message = "";
         int id = 0;
-        id = R.drawable.info;
+        id = R.drawable.treasure;
         message +=
-                "【近日、アップデート予定です】\n\n\n\n\n";
-        CustomDialog.showCustomDialog(this, id, message, 0);
+                "【広告動画】を閲覧して\n報酬（お宝）をGETしますか？\n\nお宝を１つ入手できます\n\n";
+        CustomDialog.showCustomDialogYesNo(this, id, message, 54, 0);
     //test_make
         GPS_type = 1;
     }
