@@ -38,6 +38,11 @@ import android.util.Log;
 import android.widget.Toast;
 import android.Manifest;
 
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -213,6 +218,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     private boolean list_town_refresh = false;  //村画面の強制リフレッシュ
 
+    //広告表示関連
+    private boolean isBannerOpen = false;
+    private AdView mAdview;
+    private LinearLayout admobLayout;
+    private boolean visibleAd = false;
+    private View rootView;
+    //本番 ID
+//    private String adUnitID = "ca-app-pub-4924620089567925/7206654134";
+    //テスト ID　
+    private String adUnitID = "ca-app-pub-3940256099942544/6300978111";
+
     private final ActivityResultLauncher<String>
             requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
@@ -248,6 +264,32 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
  */
 //            locationStart();
+        }
+
+    }
+    /************************
+        広告処理
+    *************************/
+    public void AdViewActive(boolean flag){
+
+        if (flag != visibleAd){
+            visibleAd = flag;
+        }
+        else{
+            return;
+        }
+        if (visibleAd){
+            MobileAds.initialize(this);
+            mAdview = new AdView(this);
+            mAdview.setAdUnitId(adUnitID);
+            mAdview.setAdSize(AdSize.BANNER);
+            admobLayout = findViewById(R.id.adView);
+            admobLayout.addView(mAdview);
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdview.loadAd(adRequest);
+        } else {
+            mAdview.destroy();
+            mAdview = null;
         }
     }
 
@@ -545,6 +587,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         else {
             //サブ画面へ移動
             setContentView(R.layout.activity_sub);
+
+            //test_make
+            //広告表示スタート
+            AdViewActive(true);
+
             BgmStart(5);
             SubShow();
 
@@ -646,8 +693,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 db_stamina = 0;
             }
         }
-        setContentView(R.layout.activity_sub);
         gameClear();
+        setContentView(R.layout.activity_sub);
+        AdViewActive(true);
         SubShow();
     }
     public void onSubStartEnd(View v) {
@@ -704,6 +752,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         bak1_ido = 0.0f;        //前回の位置
         bak1_keido = 0.0f;      //前回の位置
 
+        AdViewActive(false);
         AppDBUpdated();
     }
 
@@ -744,8 +793,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                             "【START】を押してください\n\n\n";
             CustomDialog.showCustomDialog(this, id, message, 0);
 
-            setContentView(R.layout.activity_sub);
             gameClear();
+
+            setContentView(R.layout.activity_sub);
+            AdViewActive(true);
             SubShow();
         }
     }

@@ -175,7 +175,8 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         //レーダー範囲
-//        rader = 200;
+/*test_make*/
+//        rader = 500;
         rader = 150;
 //      rader = (Max_X / MASU);   // 100m ÷　MASU（1080dot の時　MASU=21）
 
@@ -229,7 +230,8 @@ public class MyMap extends SurfaceView implements SurfaceHolder.Callback {
         float xc2;
         float yc2;
 
-//        float range = 200;
+/*test_make*/
+//        float range = 500;
         float range = 150;
 
         //宝物を表示
